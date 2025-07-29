@@ -1,8 +1,8 @@
 // src/app/protected/page.tsx
-"use Client";
+"use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { useAuthListener } from "@/hooks/useAuthListener";
 
