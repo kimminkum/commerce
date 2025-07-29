@@ -1,14 +1,14 @@
 // src/app/protected/page.tsx
-"use client";
+"use Client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { useAuthStore } from "@/store/authStore";
 import { useAuthListener } from "@/hooks/useAuthListener";
 
 export default function ProtectedPage() {
-  const user = useAuthStore((state) => state.user);
-  const loading = useAuthStore((state) => state.isLoading);
+  const user = useAuthStore((s) => s.user);
+  const loading = useAuthStore((s) => s.isLoading);
   const router = useRouter();
 
   useAuthListener(); // Firebase 로그인 상태 유지
