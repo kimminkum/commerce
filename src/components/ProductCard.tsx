@@ -3,18 +3,15 @@
 
 import Image from "next/image";
 import { Product } from "@/types/product";
-import { useFavoriteStore } from "@/store/favoriteStore";
-import { useCartStore } from "@/store/cartStore";
+import { useProductStore } from "@/store/productStore";
 
 interface Props {
   product: Product;
 }
 
 export default function ProductCard({ product }: Props) {
-  const { favorites, toggleFavorite } = useFavoriteStore();
-  const { addToCart } = useCartStore();
-
-  const isFavorite = favorites.includes(product.id);
+  const { toggleWishlist, toggleCart, isInWishlist, isInCart } =
+    useProductStore();
 
   return (
     <div
@@ -25,7 +22,7 @@ export default function ProductCard({ product }: Props) {
       }}
     >
       <button
-        onClick={() => toggleFavorite(product.id)}
+        onClick={() => toggleWishlist(product)}
         style={{
           position: "absolute",
           top: 8,
@@ -33,7 +30,7 @@ export default function ProductCard({ product }: Props) {
           background: "none",
           border: "none",
           fontSize: "1.5rem",
-          color: isFavorite ? "red" : "gray",
+          color: isInWishlist(product.id) ? "red" : "gray",
           cursor: "pointer"
         }}
       >
@@ -48,7 +45,9 @@ export default function ProductCard({ product }: Props) {
       />
       <h3 style={{ fontSize: "1rem" }}>{product.title}</h3>
       <p>{product.price.toLocaleString()}원</p>
-      <button onClick={() => addToCart(product)}>🛒 장바구니에 담기</button>
+      <button onClick={() => toggleCart(product)}>
+        {isInCart(product.id) ? "🛒 제거" : "🛒 장바구니에 담기"}
+      </button>
     </div>
   );
 }
