@@ -16,6 +16,7 @@ export default function MobileMenu({ closeMenu }: Props) {
         <DrawerLink href="/wishlist">찜</DrawerLink>
         <DrawerLink href="/cart">장바구니</DrawerLink>
         <DrawerLink href="/login">로그인</DrawerLink>
+        <DrawerLink href="/products">전체상품</DrawerLink>
 
         {/* 상품 아코디언 */}
         <MobileAccordion />

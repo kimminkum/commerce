@@ -26,7 +26,7 @@ export default function NavDropdown() {
 
   return (
     <HoverZone onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-      <Trigger href="#">상품 ▾</Trigger>
+      <Trigger href="/products">상품 ▾</Trigger>
 
       {isOpen && (
         <DropdownArea>

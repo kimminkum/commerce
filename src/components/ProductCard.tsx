@@ -5,6 +5,7 @@ import styled from "styled-components";
 import Image from "next/image";
 import { Product } from "@/types/product";
 import { useProductStore } from "@/store/productStore";
+import Link from "next/link";
 
 interface Props {
   product: Product;
@@ -15,38 +16,40 @@ export default function ProductCard({ product }: Props) {
     useProductStore();
 
   return (
-    <Card>
-      <ImageWrapper>
-        <StyledImage
-          src={product.image}
-          alt={product.title}
-          width={200}
-          height={200}
-        />
-        <WishlistButton
-          onClick={() => toggleWishlist(product)}
-          aria-label={isInWishlist(product.id) ? "찜 취소" : "찜 추가"}
-        >
-          {isInWishlist(product.id) ? "❤️" : "🤍"}
-        </WishlistButton>
-      </ImageWrapper>
+    <Link href={`/products/${product.id}`}>
+      <Card>
+        <ImageWrapper>
+          <StyledImage
+            src={product.image}
+            alt={product.title}
+            width={200}
+            height={200}
+          />
+          <WishlistButton
+            onClick={() => toggleWishlist(product)}
+            aria-label={isInWishlist(product.id) ? "찜 취소" : "찜 추가"}
+          >
+            {isInWishlist(product.id) ? "❤️" : "🤍"}
+          </WishlistButton>
+        </ImageWrapper>
 
-      <Info>
-        <Title>{product.title}</Title>
-        <Price>{product.price.toLocaleString()}원</Price>
-      </Info>
+        <Info>
+          <Title>{product.title}</Title>
+          <Price>{product.price.toLocaleString()}원</Price>
+        </Info>
 
-      <Actions>
-        <ActionButton
-          onClick={() => toggleCart(product)}
-          aria-label={
-            isInCart(product.id) ? "장바구니에서 제거" : "장바구니에 추가"
-          }
-        >
-          {isInCart(product.id) ? "🛒 담김" : "➕ 담기"}
-        </ActionButton>
-      </Actions>
-    </Card>
+        <Actions>
+          <ActionButton
+            onClick={() => toggleCart(product)}
+            aria-label={
+              isInCart(product.id) ? "장바구니에서 제거" : "장바구니에 추가"
+            }
+          >
+            {isInCart(product.id) ? "🛒 담김" : "➕ 담기"}
+          </ActionButton>
+        </Actions>
+      </Card>
+    </Link>
   );
 }
 
