@@ -1,5 +1,5 @@
+// src/components/Header/NavDropdown.tsx
 "use client";
-
 import styled from "styled-components";
 import { useState, useRef } from "react";
 import Link from "next/link";
@@ -11,9 +11,7 @@ export default function NavDropdown() {
   const closeTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const handleMouseEnter = () => {
-    if (closeTimeout.current) {
-      clearTimeout(closeTimeout.current);
-    }
+    if (closeTimeout.current) clearTimeout(closeTimeout.current);
     setIsOpen(true);
   };
 
@@ -21,49 +19,51 @@ export default function NavDropdown() {
     closeTimeout.current = setTimeout(() => {
       setIsOpen(false);
       setHoveredCategory(null);
-    }, 100); // ⏱ 200ms 딜레이 후 닫힘
+    }, 100); // 0.1초 후 닫힘
   };
 
   return (
-    <HoverZone onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <DropdownWrapper
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <Trigger href="/products">상품 ▾</Trigger>
-
       {isOpen && (
         <DropdownArea>
-          <DropdownMenu>
-            <MiddleColumn>
-              {categories.map((cat) => (
-                <CategoryItem
-                  key={cat.name}
-                  onMouseEnter={() => setHoveredCategory(cat.name)}
-                >
-                  <CategoryLabel>
-                    {cat.icon} {cat.name}
-                  </CategoryLabel>
+          <MiddleColumn>
+            {categories.map((cat) => (
+              <CategoryItem
+                key={cat.name}
+                onMouseEnter={() => setHoveredCategory(cat.name)}
+              >
+                {/* 중카테고리 클릭 시 해당 카테고리로 이동 */}
+                <CategoryLabel as={Link} href={cat.path}>
+                  {cat.icon} {cat.name}
+                </CategoryLabel>
 
-                  {hoveredCategory === cat.name && (
-                    <SubMenu
-                      onMouseEnter={() => setHoveredCategory(cat.name)}
-                      onMouseLeave={() => setHoveredCategory(null)}
-                    >
-                      {cat.subItems.map((sub) => (
-                        <SubLink key={sub.name} href={sub.path}>
-                          {sub.name}
-                        </SubLink>
-                      ))}
-                    </SubMenu>
-                  )}
-                </CategoryItem>
-              ))}
-            </MiddleColumn>
-          </DropdownMenu>
+                {/* 소카테고리 (hover 시 보임, 클릭 시 하위 경로 이동) */}
+                {hoveredCategory === cat.name && (
+                  <SubMenu
+                    onMouseEnter={() => setHoveredCategory(cat.name)}
+                    onMouseLeave={() => setHoveredCategory(null)}
+                  >
+                    {cat.subItems.map((sub) => (
+                      <SubLink key={sub.name} href={sub.path}>
+                        {sub.name}
+                      </SubLink>
+                    ))}
+                  </SubMenu>
+                )}
+              </CategoryItem>
+            ))}
+          </MiddleColumn>
         </DropdownArea>
       )}
-    </HoverZone>
+    </DropdownWrapper>
   );
 }
 
-const HoverZone = styled.div`
+const DropdownWrapper = styled.div`
   position: relative;
   display: inline-block;
 `;
@@ -79,32 +79,29 @@ const DropdownArea = styled.div`
   position: absolute;
   top: 2.5rem;
   left: 0;
-  z-index: 1000;
-`;
-
-const DropdownMenu = styled.div`
   display: flex;
-  position: relative;
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 1rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 220px;
+  z-index: 1000;
 `;
 
 const MiddleColumn = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  padding: 1rem;
+  min-width: 140px;
 `;
 
 const CategoryItem = styled.div`
   position: relative;
-  padding: 0.5rem 1rem;
-  white-space: nowrap;
   font-weight: bold;
   cursor: pointer;
-
+  white-space: nowrap;
+  padding: 0.5rem 1rem;
   &:hover {
     background: #f5f5f5;
   }
@@ -128,13 +125,13 @@ const SubMenu = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  z-index: 1001;
 `;
 
 const SubLink = styled(Link)`
   text-decoration: none;
   color: #333;
   font-size: 0.95rem;
-
   &:hover {
     color: #000;
   }

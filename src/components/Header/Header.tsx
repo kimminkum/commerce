@@ -1,9 +1,7 @@
-// src/components/Header/Header.tsx
 "use client";
-
 import TopBar from "./TopBar";
 import MobileMenu from "./MobileMenu";
-import Nav from "./Nav"; // ✅ 추가
+import Nav from "./Nav";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
@@ -23,14 +21,13 @@ export default function Header() {
         isDrawerOpen={isDrawerOpen}
         setIsDrawerOpen={setIsDrawerOpen}
       />
-      {!isMobile && <Nav />} {/* ✅ PC에서만 GNB 보이게 */}
+      {!isMobile && <Nav />}
       {isMobile && isDrawerOpen && (
         <MobileMenu closeMenu={() => setIsDrawerOpen(false)} />
       )}
     </HeaderContainer>
   );
 }
-
 const HeaderContainer = styled.header`
   width: 100%;
   background: #fff;

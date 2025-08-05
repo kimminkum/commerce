@@ -15,6 +15,18 @@ export default function ProductCard({ product }: Props) {
   const { toggleWishlist, toggleCart, isInWishlist, isInCart } =
     useProductStore();
 
+  const handleWishlistClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlist(product);
+  };
+
+  const handleCartClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleCart(product);
+  };
+
   return (
     <Link href={`/products/${product.id}`}>
       <Card>
@@ -26,7 +38,7 @@ export default function ProductCard({ product }: Props) {
             height={200}
           />
           <WishlistButton
-            onClick={() => toggleWishlist(product)}
+            onClick={handleWishlistClick}
             aria-label={isInWishlist(product.id) ? "찜 취소" : "찜 추가"}
           >
             {isInWishlist(product.id) ? "❤️" : "🤍"}
@@ -40,7 +52,7 @@ export default function ProductCard({ product }: Props) {
 
         <Actions>
           <ActionButton
-            onClick={() => toggleCart(product)}
+            onClick={handleCartClick}
             aria-label={
               isInCart(product.id) ? "장바구니에서 제거" : "장바구니에 추가"
             }

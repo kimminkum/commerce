@@ -1,6 +1,5 @@
 // src/components/Header/Nav.tsx
 "use client";
-
 import styled from "styled-components";
 import Link from "next/link";
 import NavDropdown from "./NavDropdown";
@@ -17,16 +16,17 @@ export default function Nav() {
   );
 }
 
-// 스타일 컴포넌트
-
 const NavContainer = styled.nav`
   width: 100%;
   max-width: 1680px;
   margin: 0 auto;
-  padding: 1rem 2rem;
+  padding: 0.75rem 2rem;
   background: #fff;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const NavList = styled.div`
@@ -40,7 +40,6 @@ const NavItem = styled(Link)`
   text-decoration: none;
   font-weight: 500;
   cursor: pointer;
-
   &:hover {
     color: #000;
   }
