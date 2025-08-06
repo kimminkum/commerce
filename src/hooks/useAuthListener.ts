@@ -9,8 +9,9 @@ export const useAuthListener = () => {
   const setLoading = useAuthStore((state) => state.setLoading);
 
   useEffect(() => {
+    setLoading(true);
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
+      if (user && user.uid && user.email) {
         setUser({ uid: user.uid, email: user.email });
       } else {
         setUser(null);
@@ -19,5 +20,5 @@ export const useAuthListener = () => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [setUser, setLoading]);
 };

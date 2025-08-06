@@ -23,7 +23,7 @@ export default function MobileAccordion({
             {cat.icon} {cat.name}
           </CategoryHeader>
           <SubList>
-            {cat.subItems.map((sub) => (
+            {cat.subItems?.map((sub) => (
               <li key={sub.name}>
                 <SubLink href={sub.path} onClick={closeMenu}>
                   {sub.name}

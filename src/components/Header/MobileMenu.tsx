@@ -4,8 +4,11 @@ import styled from "styled-components";
 import Link from "next/link";
 import MobileAccordion from "./MobileAccordion";
 import SearchBar from "./SearchBar";
+import { useAuthStore } from "@/store/authStore";
 
 export default function MobileMenu({ closeMenu }: { closeMenu: () => void }) {
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
   return (
     <Overlay onClick={closeMenu}>
       <Drawer onClick={(e) => e.stopPropagation()}>
@@ -34,8 +37,14 @@ export default function MobileMenu({ closeMenu }: { closeMenu: () => void }) {
         </DrawerContent>
         {/* 하단 고정: 로그인/회원가입 */}
         <BottomFixed>
-          <BottomLink href="/login">로그인</BottomLink>
-          <BottomLink href="/signup">회원가입</BottomLink>
+          {user ? (
+            <LogoutButton onClick={logout}>로그아웃</LogoutButton>
+          ) : (
+            <>
+              <DrawerLink href="/login">로그인</DrawerLink>
+              <DrawerLink href="/signup">회원가입</DrawerLink>
+            </>
+          )}
         </BottomFixed>
       </Drawer>
     </Overlay>
@@ -117,8 +126,20 @@ const BottomFixed = styled.div`
   background: #fff;
   border-top: 1px solid #eee;
 `;
-
-const BottomLink = styled(Link)`
+const LogoutButton = styled.button`
+  color: #fff;
+  background: #222;
+  border: none;
+  border-radius: 20px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  &:hover {
+    background: #333;
+  }
+`;
+const DrawerLink = styled(Link)`
   color: #333;
   background: #f5f5f5;
   padding: 0.6rem 1.2rem;

@@ -47,7 +47,7 @@ export default function NavDropdown() {
                     onMouseEnter={() => setHoveredCategory(cat.name)}
                     onMouseLeave={() => setHoveredCategory(null)}
                   >
-                    {cat.subItems.map((sub) => (
+                    {cat.subItems?.map((sub) => (
                       <SubLink key={sub.name} href={sub.path}>
                         {sub.name}
                       </SubLink>

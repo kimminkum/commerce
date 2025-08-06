@@ -1,10 +1,11 @@
 // src/app/products/[id]/page.tsx
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
 import { useProductStore } from "@/store/productStore";
+import { useOrderStore } from "@/store/orderStore";
 import Image from "next/image";
 
 const fetchProduct = async (id: string) => {
@@ -15,11 +16,13 @@ const fetchProduct = async (id: string) => {
 
 export default function ProductDetailPage() {
   const params = useParams();
-  const { id } = params; // id는 문자열임
+  const { id } = params as { id: string };
 
-  // Zustand 상태 활용
+  // 상태 훅
   const { toggleWishlist, toggleCart, isInWishlist, isInCart } =
     useProductStore();
+  const addOrder = useOrderStore((s) => s.addOrder);
+  const router = useRouter();
 
   // 상품 fetch
   const {
@@ -28,7 +31,7 @@ export default function ProductDetailPage() {
     error
   } = useQuery({
     queryKey: ["product", id],
-    queryFn: () => fetchProduct(id as string),
+    queryFn: () => fetchProduct(id),
     enabled: !!id
   });
 
@@ -71,6 +74,18 @@ export default function ProductDetailPage() {
           >
             {isInCart(product.id) ? "🛒 담김" : "➕ 장바구니"}
           </ActionBtn>
+          <ActionBtn
+            onClick={() => {
+              addOrder({
+                id: Date.now().toString(),
+                items: [product],
+                date: new Date().toLocaleString()
+              });
+              router.replace("/order/complete");
+            }}
+          >
+            🏷️ 바로 주문
+          </ActionBtn>
         </ActionGroup>
       </Info>
     </DetailWrapper>
@@ -83,7 +98,6 @@ const DetailWrapper = styled.div`
   flex-direction: column;
   gap: 2rem;
   padding: 2rem;
-
   @media (min-width: 800px) {
     flex-direction: row;
   }
