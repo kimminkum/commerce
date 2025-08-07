@@ -5,6 +5,7 @@ import styled from "styled-components";
 import Image from "next/image";
 import { Product } from "@/types/product";
 import { useProductStore } from "@/store/productStore";
+import { useCartStore } from "@/store/cartStore";
 import Link from "next/link";
 
 interface Props {
@@ -12,8 +13,12 @@ interface Props {
 }
 
 export default function ProductCard({ product }: Props) {
-  const { toggleWishlist, toggleCart, isInWishlist, isInCart } =
-    useProductStore();
+  const { toggleWishlist, isInWishlist } = useProductStore();
+  const addToCart = useCartStore((s) => s.addToCart);
+  const removeFromCart = useCartStore((s) => s.removeFromCart);
+  const cart = useCartStore((s) => s.cart);
+
+  const isInCart = cart.some((p) => p.id === product.id);
 
   const handleWishlistClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -24,7 +29,11 @@ export default function ProductCard({ product }: Props) {
   const handleCartClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    toggleCart(product);
+    if (isInCart) {
+      removeFromCart(product.id);
+    } else {
+      addToCart(product);
+    }
   };
 
   return (
@@ -53,11 +62,9 @@ export default function ProductCard({ product }: Props) {
         <Actions>
           <ActionButton
             onClick={handleCartClick}
-            aria-label={
-              isInCart(product.id) ? "장바구니에서 제거" : "장바구니에 추가"
-            }
+            aria-label={isInCart ? "장바구니에서 제거" : "장바구니에 추가"}
           >
-            {isInCart(product.id) ? "🛒 담김" : "➕ 담기"}
+            {isInCart ? "🛒 담김" : "➕ 담기"}
           </ActionButton>
         </Actions>
       </Card>

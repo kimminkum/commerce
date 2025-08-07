@@ -11,9 +11,11 @@ interface Order {
 interface OrderStore {
   orders: Order[];
   addOrder: (order: Order) => void;
+  clearOrders: () => void;
 }
 
 export const useOrderStore = create<OrderStore>((set) => ({
   orders: [],
-  addOrder: (order) => set((state) => ({ orders: [...state.orders, order] }))
+  addOrder: (order) => set((state) => ({ orders: [order, ...state.orders] })),
+  clearOrders: () => set({ orders: [] })
 }));

@@ -1,20 +1,28 @@
 "use client";
-
 import { useCartStore } from "@/store/cartStore";
+import { useOrderStore } from "@/store/orderStore";
 import styled from "styled-components";
 import ProductCard from "@/components/ProductCard";
+import { MdShoppingCart, MdListAlt } from "react-icons/md"; // 아이콘 사용
 
 export default function ProtectedPage() {
-  // useCartStore로 통일!
   const cart = useCartStore((s) => s.cart);
+  const orders = useOrderStore((s) => s.orders);
 
   return (
     <Wrapper>
-      <h1>마이페이지</h1>
+      <Title>마이페이지</Title>
+
       <Section>
-        <h2>장바구니</h2>
+        <SectionLabel>
+          <MdShoppingCart size={22} style={{ marginRight: 6 }} />
+          장바구니
+        </SectionLabel>
         {cart.length === 0 ? (
-          <EmptyText>장바구니에 담긴 상품이 없습니다.</EmptyText>
+          <EmptyBox>
+            <MdShoppingCart size={32} />
+            <p>장바구니에 담긴 상품이 없습니다.</p>
+          </EmptyBox>
         ) : (
           <Grid>
             {cart.map((product) => (
@@ -23,18 +31,81 @@ export default function ProtectedPage() {
           </Grid>
         )}
       </Section>
-      {/* ...다른 마이페이지 정보 (주문내역 등) */}
+
+      <Divider />
+
+      <Section>
+        <SectionLabel>
+          <MdListAlt size={22} style={{ marginRight: 6 }} />
+          주문 내역
+        </SectionLabel>
+        {orders.length === 0 ? (
+          <EmptyBox>
+            <MdListAlt size={32} />
+            <p>주문 내역이 없습니다.</p>
+          </EmptyBox>
+        ) : (
+          <OrderTable>
+            <thead>
+              <tr>
+                <th>주문번호</th>
+                <th>상품</th>
+                <th>날짜</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...orders]
+                .sort((a, b) => b.date.localeCompare(a.date)) // 최근순 정렬
+                .map((order) => (
+                  <tr key={order.id}>
+                    <td>{order.id}</td>
+                    <td>
+                      {order.items.map((item) => (
+                        <span key={item.id} style={{ marginRight: 8 }}>
+                          {item.title}
+                        </span>
+                      ))}
+                    </td>
+                    <td>{order.date}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </OrderTable>
+        )}
+      </Section>
     </Wrapper>
   );
 }
 
-// --- 스타일 ---
 const Wrapper = styled.div`
   padding: 2rem;
+  max-width: 960px;
+  margin: 0 auto;
+`;
+
+const Title = styled.h1`
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-weight: bold;
+  text-align: center;
 `;
 
 const Section = styled.section`
   margin-bottom: 2.5rem;
+`;
+
+const SectionLabel = styled.h2`
+  font-size: 1.25rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+`;
+
+const Divider = styled.hr`
+  margin: 2.5rem 0 2.5rem 0;
+  border: 0;
+  border-top: 1px solid #f0f0f0;
 `;
 
 const Grid = styled.div`
@@ -43,7 +114,31 @@ const Grid = styled.div`
   gap: 1.5rem;
 `;
 
-const EmptyText = styled.p`
-  color: #999;
-  padding: 1rem 0;
+const OrderTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  th,
+  td {
+    border: 1px solid #eee;
+    padding: 0.7rem;
+    font-size: 1rem;
+    text-align: left;
+    word-break: break-all;
+  }
+  th {
+    background: #f8f8f8;
+    font-weight: 600;
+  }
+`;
+
+const EmptyBox = styled.div`
+  padding: 2.5rem 0;
+  text-align: center;
+  color: #aaa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 1.05rem;
 `;

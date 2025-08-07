@@ -42,18 +42,20 @@ export default function NavDropdown() {
                 </CategoryLabel>
 
                 {/* 소카테고리 (hover 시 보임, 클릭 시 하위 경로 이동) */}
-                {hoveredCategory === cat.name && (
-                  <SubMenu
-                    onMouseEnter={() => setHoveredCategory(cat.name)}
-                    onMouseLeave={() => setHoveredCategory(null)}
-                  >
-                    {cat.subItems?.map((sub) => (
-                      <SubLink key={sub.name} href={sub.path}>
-                        {sub.name}
-                      </SubLink>
-                    ))}
-                  </SubMenu>
-                )}
+                {hoveredCategory === cat.name &&
+                  cat.subItems &&
+                  cat.subItems.length > 0 && (
+                    <SubMenu
+                      onMouseEnter={() => setHoveredCategory(cat.name)}
+                      onMouseLeave={() => setHoveredCategory(null)}
+                    >
+                      {cat.subItems.map((sub) => (
+                        <SubLink key={sub.name} href={sub.path}>
+                          {sub.name}
+                        </SubLink>
+                      ))}
+                    </SubMenu>
+                  )}
               </CategoryItem>
             ))}
           </MiddleColumn>

@@ -5,8 +5,11 @@ import Nav from "./Nav";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useAuthExpire } from "@/hooks/useAuthExpire";
 
 export default function Header() {
+  useAuthExpire();
+
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 

@@ -15,7 +15,8 @@ export default function SignupPage() {
       const user = await signUp(email, password);
       if (!user.uid || !user.email)
         throw new Error("잘못된 사용자 정보입니다.");
-      setUser({ uid: user.uid, email: user.email }); // uid/email이 항상 string
+      const expiresAt = Date.now() + 60 * 60 * 1000;
+      setUser({ uid: user.uid, email: user.email }, expiresAt);
       router.push("/");
     } catch (err) {
       alert("회원가입 실패");
