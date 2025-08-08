@@ -5,20 +5,14 @@ import type { Product } from "@/types/product";
 
 interface ProductStore {
   wishlist: Product[];
-  cart: Product[];
-
   toggleWishlist: (product: Product) => void;
-  toggleCart: (product: Product) => void;
-
   isInWishlist: (id: number) => boolean;
-  isInCart: (id: number) => boolean;
 }
 
 export const useProductStore = create<ProductStore>()(
   persist(
     (set, get) => ({
       wishlist: [],
-      cart: [],
 
       toggleWishlist: (product) => {
         const { wishlist } = get();
@@ -29,21 +23,8 @@ export const useProductStore = create<ProductStore>()(
         set({ wishlist: updated });
       },
 
-      toggleCart: (product) => {
-        const { cart } = get();
-        const exists = cart.find((item) => item.id === product.id);
-        const updated = exists
-          ? cart.filter((item) => item.id !== product.id)
-          : [...cart, product];
-        set({ cart: updated });
-      },
-
       isInWishlist: (id) => {
         return get().wishlist.some((item) => item.id === id);
-      },
-
-      isInCart: (id) => {
-        return get().cart.some((item) => item.id === id);
       }
     }),
     {

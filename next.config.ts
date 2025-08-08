@@ -4,7 +4,7 @@ const nextConfig = {
     styledComponents: true
   },
   images: {
-    domains: ["fakestoreapi.com"]
+    domains: ["fakestoreapi.com", "images.unsplash.com"]
   }
 };
 

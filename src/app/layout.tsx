@@ -1,8 +1,8 @@
-// app/layout.tsx 또는 app/rootLayout.tsx
 import { Geist, Geist_Mono } from "next/font/google";
 import Header from "@/components/Header/Header";
 import QueryProvider from "@/providers/QueryProvider";
-import GlobalStyles from "@/styles/GlobalStyles"; // ✅ 추가
+import GlobalStyles from "@/styles/GlobalStyles";
+import SessionExpireWatcher from "@/components/SessionExpireWatcher"; // ✅추가
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,8 +28,9 @@ export default function RootLayout({
     <html lang="ko">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <QueryProvider>
-          <GlobalStyles /> {/* ✅ 전역 스타일 적용 */}
+          <GlobalStyles />
           <Header />
+          <SessionExpireWatcher />
           {children}
         </QueryProvider>
       </body>

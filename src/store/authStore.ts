@@ -1,3 +1,4 @@
+// src/store/authStore.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -5,12 +6,11 @@ interface User {
   uid: string;
   email: string;
 }
-
 interface AuthState {
   user: User | null;
-  isLoading: boolean;
   expiresAt: number | null;
-  setUser: (user: User | null, expiresAt?: number) => void;
+  isLoading: boolean;
+  setUser: (user: User | null, expiresAt?: number | null) => void;
   setLoading: (loading: boolean) => void;
   logout: () => void;
 }
@@ -21,12 +21,10 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       expiresAt: null,
       isLoading: false,
-      setUser: (user, expiresAt) => set({ user, expiresAt: expiresAt ?? null }),
+      setUser: (user, expiresAt = null) => set({ user, expiresAt }),
       setLoading: (isLoading) => set({ isLoading }),
-      logout: () => set({ user: null })
+      logout: () => set({ user: null, expiresAt: null })
     }),
-    {
-      name: "auth-storage"
-    }
+    { name: "auth-storage" }
   )
 );

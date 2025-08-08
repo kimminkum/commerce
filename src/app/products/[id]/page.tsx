@@ -5,8 +5,10 @@ import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
 import { useProductStore } from "@/store/productStore";
+import { useCartStore } from "@/store/cartStore";
 import { useOrderStore } from "@/store/orderStore";
 import Image from "next/image";
+import { useCallback } from "react";
 
 const fetchProduct = async (id: string) => {
   const res = await fetch(`https://fakestoreapi.com/products/${id}`);
@@ -18,13 +20,23 @@ export default function ProductDetailPage() {
   const params = useParams();
   const { id } = params as { id: string };
 
-  // 상태 훅
-  const { toggleWishlist, toggleCart, isInWishlist, isInCart } =
-    useProductStore();
+  // 찜
+  const { toggleWishlist, isInWishlist } = useProductStore();
+
+  // 장바구니
+  const cart = useCartStore((s) => s.cart);
+  const addToCart = useCartStore((s) => s.addToCart);
+  const removeFromCart = useCartStore((s) => s.removeFromCart);
+
+  // 안전한 isInCart
+  const isInCart = useCallback(
+    (productId: number) => cart.some((item) => item.id === productId),
+    [cart]
+  );
+
   const addOrder = useOrderStore((s) => s.addOrder);
   const router = useRouter();
 
-  // 상품 fetch
   const {
     data: product,
     isLoading,
@@ -38,6 +50,15 @@ export default function ProductDetailPage() {
   if (isLoading) return <Message>불러오는 중...</Message>;
   if (error || !product)
     return <Message>상품 정보를 불러올 수 없습니다.</Message>;
+
+  // 장바구니 토글
+  const handleCart = () => {
+    if (isInCart(product.id)) {
+      removeFromCart(product.id);
+    } else {
+      addToCart(product);
+    }
+  };
 
   return (
     <DetailWrapper>
@@ -67,7 +88,7 @@ export default function ProductDetailPage() {
             {isInWishlist(product.id) ? "❤️ 찜됨" : "🤍 찜"}
           </ActionBtn>
           <ActionBtn
-            onClick={() => toggleCart(product)}
+            onClick={handleCart}
             aria-label={
               isInCart(product.id) ? "장바구니에서 제거" : "장바구니에 추가"
             }
