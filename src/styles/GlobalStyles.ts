@@ -4,6 +4,36 @@
 import { createGlobalStyle } from "styled-components";
 
 const GlobalStyles = createGlobalStyle`
+  @font-face {
+    font-family: 'Pretendard';
+    font-style: normal;
+    font-weight: 700;
+    src: url('/fonts/Pretendard-Bold.woff') format('woff');
+  }
+  @font-face {
+    font-family: 'Pretendard';
+    font-style: normal;
+    font-weight: 600;
+    src: url('/fonts/Pretendard-SemiBold.woff') format('woff');
+  }
+  @font-face {
+    font-family: 'Pretendard';
+    font-style: normal;
+    font-weight: 500;
+    src: url('/fonts/Pretendard-Medium.woff') format('woff');
+  }
+  @font-face {
+    font-family: 'Pretendard';
+    font-style: normal;
+    font-weight: 400;
+    src: url('/fonts/Pretendard-Regular.woff') format('woff');
+  }
+  @font-face {
+    font-family: 'Pretendard';
+    font-style: normal;
+    font-weight: 300;
+    src: url('/fonts/Pretendard-Light.woff') format('woff');
+  }
   /* 기본 박스 설정 */
   * {
     box-sizing: border-box;
@@ -13,7 +43,7 @@ const GlobalStyles = createGlobalStyle`
 
   /* 기본 폰트 및 배경색 설정 */
   html, body {
-    font-family: 'Pretendard', sans-serif;
+    font-family: 'Pretendard', var(--font-pretendard), 'Apple SD Gothic Neo', 'Malgun Gothic', 'sans-serif';
     background-color: #fff;
     color: #333;
     line-height: 1.5;
