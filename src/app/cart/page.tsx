@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { useCartStore } from "@/store/cartStore";
 import { useOrderStore } from "@/store/orderStore";
-import ProductCard from "@/components/ProductCard";
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
-import { Product } from "@/types/product";
+import CartItemRow from "@/components/cart/CartItemRow";
 
 export default function CartPage() {
   const cart = useCartStore((s) => s.cart);
@@ -14,7 +13,6 @@ export default function CartPage() {
   const addOrder = useOrderStore((s) => s.addOrder);
   const router = useRouter();
 
-  // 체크된 상품 id 관리
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
 
   const handleCheck = (id: number) => {
@@ -31,79 +29,96 @@ export default function CartPage() {
       items: selected,
       date: new Date().toLocaleString()
     });
-    // 선택 상품만 장바구니에서 제거
     selected.forEach((item) => removeFromCart(item.id));
     setCheckedIds([]);
     router.replace("/order/complete");
   };
 
-  if (cart.length === 0)
-    return <div style={{ padding: 32 }}>장바구니가 비었습니다.</div>;
+  if (cart.length === 0) return <Empty>장바구니가 비었습니다.</Empty>;
 
   return (
     <Wrapper>
-      <h1>🛒 장바구니</h1>
-      <Grid>
+      <TopBar>
+        <h1>🛒 장바구니</h1>
+        <Right>
+          <span>선택 {checkedIds.length}개</span>
+          <OrderButton onClick={handleOrderSelected}>
+            선택 상품 주문
+          </OrderButton>
+        </Right>
+      </TopBar>
+
+      <List>
         {cart.map((product) => (
-          <ProductCardWithCheck
+          <CartItemRow
             key={product.id}
             product={product}
             checked={checkedIds.includes(product.id)}
             onCheck={handleCheck}
+            onRemove={removeFromCart}
           />
         ))}
-      </Grid>
-      <OrderButton onClick={handleOrderSelected}>선택 상품 주문</OrderButton>
+      </List>
+
+      <BottomBar>
+        <OrderButton onClick={handleOrderSelected}>선택 상품 주문</OrderButton>
+      </BottomBar>
     </Wrapper>
   );
 }
 
-interface ProductCardWithCheckProps {
-  product: Product;
-  checked: boolean;
-  onCheck: (id: number) => void;
-}
-
-function ProductCardWithCheck({
-  product,
-  checked,
-  onCheck
-}: ProductCardWithCheckProps) {
-  return (
-    <ProductCardWrapper>
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={() => onCheck(product.id)}
-        style={{ marginRight: 8 }}
-      />
-      <ProductCard product={product} />
-    </ProductCardWrapper>
-  );
-}
-
+// --- styles ---
 const Wrapper = styled.div`
-  padding: 2rem;
+  padding: 2rem 1.25rem 3.5rem;
+  max-width: 980px;
+  margin: 0 auto;
 `;
-const Grid = styled.div`
+
+const TopBar = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  h1 {
+    font-size: 1.5rem;
+  }
 `;
+
+const Right = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #667;
+  font-size: 0.95rem;
+`;
+
+const List = styled.ul`
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+`;
+
+const BottomBar = styled.div`
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+`;
+
 const OrderButton = styled.button`
-  margin-top: 2rem;
-  padding: 1rem 2.5rem;
-  font-size: 1.1rem;
+  padding: 0.9rem 1.6rem;
+  font-size: 1rem;
   background: #1164f4;
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   &:hover {
     background: #0033a5;
   }
 `;
-const ProductCardWrapper = styled.div`
-  display: flex;
-  align-items: center;
+
+const Empty = styled.div`
+  padding: 2.5rem;
+  text-align: center;
 `;

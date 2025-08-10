@@ -74,21 +74,24 @@ export default function ProductCard({ product }: Props) {
 
 // 스타일
 const Card = styled.div`
+  /* 고정 레이아웃: 이미지 / 정보 / 액션 3행 */
+  display: grid;
+  grid-template-rows: 200px auto auto;
+  gap: 0.75rem;
+
   padding: 1rem;
   border: 1px solid #ddd;
   border-radius: 8px;
   background: #fff;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.03);
   position: relative;
+  height: 100%; /* 그리드 셀 높이 맞추기 */
 `;
 
 const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 200px; /* 이미지 영역 고정 */
 `;
 
 const StyledImage = styled(Image)`
@@ -107,22 +110,38 @@ const WishlistButton = styled.button`
 `;
 
 const Info = styled.div`
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  /* 아래 Title의 min-height와 합쳐 카드 높이 안정화 */
 `;
 
 const Title = styled.h3`
   font-size: 1rem;
   margin: 0.25rem 0;
+
+  /* 2줄 고정 + 말줄임 처리 */
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* 줄 수 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  /* 줄 높이에 맞춘 고정 높이 (2줄) */
+  line-height: 1.3;
+  min-height: calc(1.3em * 2);
 `;
 
 const Price = styled.p`
   font-weight: bold;
   color: #333;
+  margin-top: 0.35rem;
 `;
 
 const Actions = styled.div`
   display: flex;
   justify-content: flex-end;
+  align-items: center;
 `;
 
 const ActionButton = styled.button`
