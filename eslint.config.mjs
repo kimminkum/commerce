@@ -13,4 +13,12 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];
 
-export default eslintConfig;
+export default [
+  ...eslintConfig,               
+  {
+    files: ["**/*.d.ts"],         
+    rules: {
+      "@typescript-eslint/no-empty-object-type": "off",
+    },
+  },
+];

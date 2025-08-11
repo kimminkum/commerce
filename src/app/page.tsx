@@ -57,13 +57,13 @@ export default function HomePage() {
           </Swiper>
         </BannerSection>
 
-        {/* 이벤트 퀵 바로 연결 (별도 영역) */}
+        {/* 이벤트 퀵 바로 연결 */}
         <EventQuick>
           <EventLink href="/events/1">신상품 프로모션</EventLink>
           <EventLink href="/events/2">오늘의 특가 이벤트</EventLink>
         </EventQuick>
 
-        {/* 카테고리/추천 등 대형 이커머스 스타일 샘플 */}
+        {/* 카테고리/추천 */}
         <MainSection>
           <SectionTitle>🔥 인기 카테고리 바로가기</SectionTitle>
           <CategoryGrid>
@@ -79,48 +79,33 @@ export default function HomePage() {
           <SectionTitle>💎 오늘의 추천 상품</SectionTitle>
           <FlexRow>
             <ProductCard>
-              <Image
+              <CardImg
                 src="/banner1.jpg"
                 alt="남자 셔츠"
                 width={90}
                 height={90}
-                style={{
-                  objectFit: "contain",
-                  borderRadius: "7px",
-                  marginBottom: "1.1rem"
-                }}
                 priority
               />
               <div>남자 셔츠</div>
               <div className="price">22.3$</div>
             </ProductCard>
             <ProductCard>
-              <Image
+              <CardImg
                 src="/banner2.jpg"
                 alt="여성 자켓"
                 width={90}
                 height={90}
-                style={{
-                  objectFit: "contain",
-                  borderRadius: "7px",
-                  marginBottom: "1.1rem"
-                }}
                 priority
               />
               <div>여성 자켓 </div>
               <div className="price">29.95$</div>
             </ProductCard>
             <ProductCard>
-              <Image
+              <CardImg
                 src="/banner3.jpg"
                 alt="삼성 모니터"
                 width={90}
                 height={90}
-                style={{
-                  objectFit: "contain",
-                  borderRadius: "7px",
-                  marginBottom: "1.1rem"
-                }}
                 priority
               />
               <div>삼성 49인치 모니터</div>
@@ -144,11 +129,11 @@ export default function HomePage() {
         <FooterInner>
           <div>
             <strong>My Commerce Demo</strong> <br />
-            (c) 2025 토끼 만렙
+            (c) 김민겸 포트폴리오
           </div>
           <div>
             <a href="mailto:contact@mycommerce.com">
-              문의: contact@mycommerce.com
+              문의: h24breaker@naver.com
             </a>
           </div>
         </FooterInner>
@@ -168,9 +153,9 @@ const BannerSection = styled.section`
   margin: 2.5rem 0 1.5rem 0;
   position: relative;
   .swiper {
-    border-radius: 18px;
+    border-radius: ${({ theme }) => theme.radius.card};
     overflow: hidden;
-    box-shadow: 0 8px 32px 0 rgba(40, 50, 80, 0.08);
+    box-shadow: ${({ theme }) => theme.shadow};
   }
 `;
 
@@ -207,16 +192,16 @@ const EventQuick = styled.div`
   margin-bottom: 1.5rem;
 `;
 const EventLink = styled(Link)`
-  background: #f5f7fb;
-  color: #222;
+  background: ${({ theme }) => theme.colors.gray100};
+  color: ${({ theme }) => theme.colors.text};
   padding: 0.55rem 1.3rem;
-  border-radius: 7px;
+  border-radius: ${({ theme }) => theme.radius.md};
   font-weight: 600;
   font-size: 1.05rem;
-  box-shadow: 0 2px 8px rgba(120, 130, 160, 0.04);
+  box-shadow: ${({ theme }) => theme.shadow};
   transition: background 0.14s;
   &:hover {
-    background: #ebeff7;
+    background: ${({ theme }) => theme.colors.gray200};
   }
 `;
 const BannerPagination = styled.div`
@@ -229,7 +214,7 @@ const BannerPagination = styled.div`
     font-size: 1.05rem;
     font-weight: 500;
     background: rgba(30, 36, 51, 0.2);
-    border-radius: 7px;
+    border-radius: ${({ theme }) => theme.radius.md};
     padding: 0.17rem 0.9rem 0.2rem 0.9rem;
     letter-spacing: 0.06em;
   }
@@ -244,6 +229,7 @@ const SectionTitle = styled.h2`
   font-weight: 700;
   margin-bottom: 1.3rem;
   letter-spacing: -0.01em;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const CategoryGrid = styled.div`
@@ -256,16 +242,16 @@ const CatCard = styled(Link)`
   min-width: 120px;
   max-width: 180px;
   padding: 1.2rem 0.7rem;
-  background: #f9faff;
-  border-radius: 13px;
-  box-shadow: 0 2px 8px rgba(120, 130, 160, 0.04);
+  background: ${({ theme }) => theme.colors.gray100};
+  border-radius: ${({ theme }) => theme.radius.card};
+  box-shadow: ${({ theme }) => theme.shadow};
   font-weight: 600;
   font-size: 1.07rem;
-  color: #1d2951;
+  color: ${({ theme }) => theme.colors.text};
   text-align: center;
   transition: background 0.14s;
   &:hover {
-    background: #f1f7ff;
+    background: ${({ theme }) => theme.colors.gray200};
   }
 `;
 
@@ -278,26 +264,27 @@ const ProductCard = styled.div`
   flex: 1 1 190px;
   min-width: 180px;
   max-width: 230px;
-  background: #fff;
-  border: 1px solid #e6e9f1;
-  border-radius: 11px;
-  box-shadow: 0 2px 14px 0 rgba(110, 120, 140, 0.04);
+  background: ${({ theme }) => theme.colors.bg};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.card};
+  box-shadow: ${({ theme }) => theme.shadow};
   padding: 1.2rem 0.6rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  img {
-    width: 90px;
-    height: 90px;
-    object-fit: contain;
-    border-radius: 7px;
-    margin-bottom: 1.1rem;
-  }
+
   .price {
-    color: #1164f4;
+    color: ${({ theme }) => theme.colors.primary};
     font-weight: bold;
     margin-top: 0.4rem;
   }
+`;
+const CardImg = styled(Image)`
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  border-radius: ${({ theme }) => theme.radius.md};
+  margin-bottom: 1.1rem;
 `;
 
 const QuickNav = styled.div`
@@ -307,28 +294,28 @@ const QuickNav = styled.div`
   margin-top: 0.9rem;
 `;
 const QuickLink = styled(Link)`
-  background: #fafafd;
-  color: #223;
-  border-radius: 7px;
+  background: ${({ theme }) => theme.colors.gray100};
+  color: ${({ theme }) => theme.colors.text};
+  border-radius: ${({ theme }) => theme.radius.md};
   padding: 0.65rem 1.2rem;
   font-weight: 600;
   text-decoration: none;
   transition: background 0.14s;
   &:hover {
-    background: #e6eef7;
+    background: ${({ theme }) => theme.colors.gray200};
   }
 `;
 
 const Footer = styled.footer`
   width: 100%;
   background: #fafbfc;
-  border-top: 1px solid #eee;
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
   padding: 2.5rem 0 2.1rem 0;
 `;
 const FooterInner = styled.div`
   max-width: 1100px;
   margin: 0 auto;
-  color: #222;
+  color: ${({ theme }) => theme.colors.text};
   font-size: 1.05rem;
   display: flex;
   flex-direction: row;
@@ -348,9 +335,9 @@ const BannerOverlay = styled.div`
   z-index: 2;
   color: #fff;
   background: rgba(30, 36, 51, 0.22);
-  border-radius: 10px;
+  border-radius: ${({ theme }) => theme.radius.card};
   padding: 1.1rem 1.6rem 1.3rem 1.6rem;
-  box-shadow: 0 2px 16px rgba(20, 24, 40, 0.18);
+  box-shadow: ${({ theme }) => theme.shadow};
   @media (max-width: 600px) {
     left: 0.7rem;
     right: 0.7rem;

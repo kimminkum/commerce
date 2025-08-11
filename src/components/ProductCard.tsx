@@ -81,7 +81,7 @@ const Card = styled.div`
 
   padding: 1rem;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: ${({ theme }) => theme.radius.md};
   background: #fff;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.03);
   position: relative;
@@ -96,7 +96,7 @@ const ImageWrapper = styled.div`
 
 const StyledImage = styled(Image)`
   object-fit: contain;
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.radius.sm};
 `;
 
 const WishlistButton = styled.button`

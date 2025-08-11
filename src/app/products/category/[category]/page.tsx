@@ -1,4 +1,3 @@
-// src/app/products/[category]/page.tsx
 "use client";
 
 import { useParams } from "next/navigation";
@@ -75,13 +74,17 @@ const Header = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1rem;
+
+  h1 {
+    color: ${({ theme }) => theme.colors.text};
+  }
 `;
 const SortSelect = styled.select`
   padding: 0.4rem 1rem;
-  border-radius: 6px;
-  border: 1px solid #ddd;
+  border-radius: ${({ theme }) => theme.radius.md};
+  border: 1px solid ${({ theme }) => theme.colors.border};
   font-size: 1rem;
-  background: #fff;
+  background: ${({ theme }) => theme.colors.bg};
 `;
 const Grid = styled.div`
   display: grid;

@@ -84,7 +84,7 @@ const DropdownArea = styled.div`
   display: flex;
   background: #fff;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: ${({ theme }) => theme.radius.md};
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   min-width: 220px;
   z-index: 1000;
@@ -120,7 +120,7 @@ const SubMenu = styled.div`
   margin-left: 1rem;
   background: #fff;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: ${({ theme }) => theme.radius.md};
   padding: 1rem;
   min-width: 140px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);

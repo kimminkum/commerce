@@ -3,7 +3,7 @@ import { useCartStore } from "@/store/cartStore";
 import { useOrderStore } from "@/store/orderStore";
 import styled from "styled-components";
 import ProductCard from "@/components/ProductCard";
-import { MdShoppingCart, MdListAlt } from "react-icons/md"; // 아이콘 사용
+import { MdShoppingCart, MdListAlt } from "react-icons/md";
 
 export default function ProtectedPage() {
   const cart = useCartStore((s) => s.cart);
@@ -55,7 +55,7 @@ export default function ProtectedPage() {
             </thead>
             <tbody>
               {[...orders]
-                .sort((a, b) => b.date.localeCompare(a.date)) // 최근순 정렬
+                .sort((a, b) => b.date.localeCompare(a.date))
                 .map((order) => (
                   <tr key={order.id}>
                     <td>{order.id}</td>
@@ -88,6 +88,7 @@ const Title = styled.h1`
   margin-bottom: 2rem;
   font-weight: bold;
   text-align: center;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const Section = styled.section`
@@ -100,12 +101,13 @@ const SectionLabel = styled.h2`
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const Divider = styled.hr`
   margin: 2.5rem 0 2.5rem 0;
   border: 0;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
 `;
 
 const Grid = styled.div`
@@ -118,16 +120,19 @@ const OrderTable = styled.table`
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
+
   th,
   td {
-    border: 1px solid #eee;
+    border: 1px solid ${({ theme }) => theme.colors.border};
     padding: 0.7rem;
     font-size: 1rem;
     text-align: left;
     word-break: break-all;
+    color: ${({ theme }) => theme.colors.text};
   }
+
   th {
-    background: #f8f8f8;
+    background: ${({ theme }) => theme.colors.gray100};
     font-weight: 600;
   }
 `;
@@ -135,7 +140,7 @@ const OrderTable = styled.table`
 const EmptyBox = styled.div`
   padding: 2.5rem 0;
   text-align: center;
-  color: #aaa;
+  color: ${({ theme }) => theme.colors.subtext};
   display: flex;
   flex-direction: column;
   align-items: center;

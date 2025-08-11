@@ -39,9 +39,9 @@ const Form = styled.form`
 `;
 
 const Input = styled.input`
-  padding: 0.4rem 0.8rem;
+  padding: 0.6rem 1.2rem;
   border: 1px solid #ddd;
-  border-radius: 20px;
+  border-radius: ${({ theme }) => theme.radius.md};
   outline: none;
   font-size: 1rem;
 `;
@@ -51,7 +51,7 @@ const Button = styled.button`
   background: transparent;
   font-size: 1.1rem;
   cursor: pointer;
-  margin-left: -1.8rem;
+  margin-left: -2.5rem;
   z-index: 1;
   padding: 0;
 `;

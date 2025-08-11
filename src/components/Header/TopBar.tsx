@@ -137,7 +137,7 @@ const LogoutButton = styled.button`
   color: #fff;
   background: #222;
   border: none;
-  border-radius: 20px;
+  border-radius: ${({ theme }) => theme.radius.button};
   padding: 0.4rem 1.1rem;
   font-weight: 500;
   font-size: 0.97rem;

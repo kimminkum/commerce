@@ -23,6 +23,6 @@ const BackLink = styled(Link)`
   padding: 0.8rem 1.5rem;
   background: #222;
   color: #fff;
-  border-radius: 5px;
+  border-radius: ${({ theme }) => theme.radius.sm};
   text-decoration: none;
 `;

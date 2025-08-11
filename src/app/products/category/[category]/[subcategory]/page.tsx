@@ -1,4 +1,3 @@
-// src/app/products/category/[category]/[subcategory]/page.tsx
 "use client";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -27,7 +26,6 @@ export default function SubCategoryPage() {
   if (isLoading) return <Wrapper>로딩 중...</Wrapper>;
   if (error || !data) return <Wrapper>상품을 불러오지 못했습니다.</Wrapper>;
 
-  // [예시] 카테고리, 소카테고리 명시적으로 매핑 필요할 수 있음!
   const filtered = data.filter(
     (product) =>
       product.category?.toLowerCase().includes(category as string) &&

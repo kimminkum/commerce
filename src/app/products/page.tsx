@@ -1,4 +1,3 @@
-// src/app/products/page.tsx
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
@@ -42,6 +41,7 @@ const Wrapper = styled.section`
 const Title = styled.h1`
   font-size: 1.5rem;
   margin-bottom: 1rem;
+  color: ${({ theme }) => theme.colors.text};
 `;
 
 const Grid = styled.div`

@@ -130,7 +130,7 @@ const LogoutButton = styled.button`
   color: #fff;
   background: #222;
   border: none;
-  border-radius: 20px;
+  border-radius: ${({ theme }) => theme.radius.button};
   padding: 0.6rem 1.2rem;
   font-weight: 500;
   font-size: 1rem;
@@ -143,7 +143,7 @@ const DrawerLink = styled(Link)`
   color: #333;
   background: #f5f5f5;
   padding: 0.6rem 1.2rem;
-  border-radius: 20px;
+  border-radius: ${({ theme }) => theme.radius.button};
   font-weight: 500;
   font-size: 1rem;
   text-decoration: none;

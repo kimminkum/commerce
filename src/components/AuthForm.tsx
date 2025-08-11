@@ -70,7 +70,7 @@ const FormWrapper = styled.div`
   background: #fff;
   max-width: 350px;
   margin: 3rem auto;
-  border-radius: 12px;
+  border-radius: ${({ theme }) => theme.radius.card};
   box-shadow: 0 4px 24px rgba(32, 44, 68, 0.07);
   padding: 2rem 2.2rem 2.5rem 2.2rem;
 `;
@@ -94,7 +94,7 @@ const Label = styled.label`
 const Input = styled.input`
   width: 100%;
   padding: 0.75rem 1rem;
-  border-radius: 7px;
+  border-radius: ${({ theme }) => theme.radius.md};
   border: 1px solid #dde2ec;
   margin-bottom: 0.3rem;
   font-size: 1rem;
@@ -122,7 +122,7 @@ const SubmitBtn = styled.button`
   background: #1164f4;
   color: #fff;
   border: none;
-  border-radius: 7px;
+  border-radius: ${({ theme }) => theme.radius.md};
   font-weight: 600;
   cursor: pointer;
   transition: background 0.16s;

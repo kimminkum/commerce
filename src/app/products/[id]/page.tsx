@@ -1,4 +1,3 @@
-// src/app/products/[id]/page.tsx
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
@@ -68,11 +67,6 @@ export default function ProductDetailPage() {
           alt={product.title}
           width={380}
           height={380}
-          style={{
-            borderRadius: "8px",
-            background: "#f6f6f6",
-            objectFit: "contain"
-          }}
           priority
         />
       </ImageBox>
@@ -113,7 +107,7 @@ export default function ProductDetailPage() {
   );
 }
 
-// --- Styled Components 동일 ---
+// --- Styled Components --- //
 const DetailWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -129,8 +123,8 @@ const ImageBox = styled.div`
   img {
     width: 100%;
     max-width: 380px;
-    border-radius: 8px;
-    background: #f6f6f6;
+    border-radius: ${({ theme }) => theme.radius.md};
+    background: ${({ theme }) => theme.colors.gray100};
     object-fit: contain;
   }
 `;
@@ -139,13 +133,17 @@ const Info = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
+  h1 {
+    color: ${({ theme }) => theme.colors.text};
+  }
 `;
 const Price = styled.div`
   font-size: 1.2rem;
   font-weight: bold;
 `;
 const Description = styled.div`
-  color: #555;
+  color: ${({ theme }) => theme.colors.subtext};
   margin: 0.5rem 0 1rem 0;
 `;
 const ActionGroup = styled.div`
@@ -154,13 +152,13 @@ const ActionGroup = styled.div`
 `;
 const ActionBtn = styled.button`
   padding: 0.5rem 1.2rem;
-  border-radius: 4px;
+  border-radius: ${({ theme }) => theme.radius.sm};
   border: none;
-  background: #f5f5f5;
+  background: ${({ theme }) => theme.colors.gray100};
   font-size: 1rem;
   cursor: pointer;
   &:hover {
-    background: #ffeaea;
+    background: ${({ theme }) => theme.colors.gray200};
   }
 `;
 const Message = styled.div`

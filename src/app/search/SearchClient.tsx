@@ -1,4 +1,3 @@
-// src/app/search/SearchClient.tsx
 "use client";
 
 import { useSearchParams } from "next/navigation";

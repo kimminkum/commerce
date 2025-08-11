@@ -1,4 +1,3 @@
-// src/app/order/complete/page.tsx
 "use client";
 
 import Link from "next/link";
@@ -41,29 +40,35 @@ const Wrap = styled.div`
   justify-content: center;
   padding: 2rem;
 `;
+
 const Card = styled.div`
   width: 100%;
   max-width: 520px;
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 14px;
-  box-shadow: 0 8px 28px rgba(30, 40, 60, 0.08);
+  background: ${({ theme }) => theme.colors.bg};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.radius.card};
+  box-shadow: ${({ theme }) => theme.shadow};
   padding: 2.2rem 1.6rem;
   text-align: center;
 `;
+
 const Emoji = styled.div`
   font-size: 2.2rem;
   margin-bottom: 0.6rem;
 `;
+
 const Title = styled.h1`
   font-size: 1.6rem;
   font-weight: 800;
   margin-bottom: 0.4rem;
+  color: ${({ theme }) => theme.colors.text};
 `;
+
 const Desc = styled.p`
-  color: #666;
+  color: ${({ theme }) => theme.colors.subtext};
   margin-bottom: 1.2rem;
 `;
+
 const Actions = styled.div`
   display: flex;
   gap: 0.6rem;
@@ -71,18 +76,21 @@ const Actions = styled.div`
   flex-wrap: wrap;
   margin-bottom: 0.6rem;
 `;
+
 const ActionLink = styled(Link)`
   padding: 0.6rem 1rem;
-  border-radius: 8px;
-  background: #f5f7fb;
-  color: #222;
+  border-radius: ${({ theme }) => theme.radius.md};
+  background: ${({ theme }) => theme.colors.gray100};
+  color: ${({ theme }) => theme.colors.text};
   font-weight: 600;
+  text-decoration: none;
   &:hover {
-    background: #ebeff7;
+    background: ${({ theme }) => theme.colors.gray200};
   }
 `;
+
 const Hint = styled.div`
   margin-top: 0.4rem;
   font-size: 0.9rem;
-  color: #9aa3af;
+  color: ${({ theme }) => theme.colors.subtext};
 `;

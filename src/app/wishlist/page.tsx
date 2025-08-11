@@ -1,4 +1,3 @@
-// src/app/wishlist/page.tsx
 "use client";
 
 import { useProductStore } from "@/store/productStore";

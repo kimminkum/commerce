@@ -59,7 +59,7 @@ const OrderButton = styled.button`
   background: #1164f4;
   color: #fff;
   border: none;
-  border-radius: 6px;
+  border-radius: ${({ theme }) => theme.radius.md};
   cursor: pointer;
   &:hover {
     background: #0033a5;
