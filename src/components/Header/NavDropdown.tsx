@@ -1,7 +1,6 @@
-// src/components/Header/NavDropdown.tsx
 "use client";
 import styled from "styled-components";
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import Link from "next/link";
 import { categories } from "@/data/categoryData";
 
@@ -14,13 +13,19 @@ export default function NavDropdown() {
     if (closeTimeout.current) clearTimeout(closeTimeout.current);
     setIsOpen(true);
   };
-
   const handleMouseLeave = () => {
     closeTimeout.current = setTimeout(() => {
       setIsOpen(false);
       setHoveredCategory(null);
-    }, 100); // 0.1초 후 닫힘
+    }, 100);
   };
+
+  // 현재 선택된(hover된) 카테고리와 서브 존재 여부
+  const current = useMemo(
+    () => categories.find((c) => c.name === hoveredCategory),
+    [hoveredCategory]
+  );
+  const hasSub = !!(current?.subItems && current.subItems.length > 0);
 
   return (
     <DropdownWrapper
@@ -28,37 +33,37 @@ export default function NavDropdown() {
       onMouseLeave={handleMouseLeave}
     >
       <Trigger href="/products">상품 ▾</Trigger>
+
       {isOpen && (
-        <DropdownArea>
-          <MiddleColumn>
+        <DropdownArea role="menu" aria-label="상품 카테고리" $hasSub={hasSub}>
+          {/* 왼쪽: 중카테고리 목록 */}
+          <LeftColumn>
             {categories.map((cat) => (
               <CategoryItem
                 key={cat.name}
                 onMouseEnter={() => setHoveredCategory(cat.name)}
+                onFocus={() => setHoveredCategory(cat.name)}
+                tabIndex={0}
               >
-                {/* 중카테고리 클릭 시 해당 카테고리로 이동 */}
-                <CategoryLabel as={Link} href={cat.path}>
+                <CategoryLink href={cat.path}>
                   {cat.icon} {cat.name}
-                </CategoryLabel>
-
-                {/* 소카테고리 (hover 시 보임, 클릭 시 하위 경로 이동) */}
-                {hoveredCategory === cat.name &&
-                  cat.subItems &&
-                  cat.subItems.length > 0 && (
-                    <SubMenu
-                      onMouseEnter={() => setHoveredCategory(cat.name)}
-                      onMouseLeave={() => setHoveredCategory(null)}
-                    >
-                      {cat.subItems.map((sub) => (
-                        <SubLink key={sub.name} href={sub.path}>
-                          {sub.name}
-                        </SubLink>
-                      ))}
-                    </SubMenu>
-                  )}
+                </CategoryLink>
               </CategoryItem>
             ))}
-          </MiddleColumn>
+          </LeftColumn>
+
+          {/* 오른쪽: 소카테고리 패널 (소분류 없으면 display:none) */}
+          <RightPanel $visible={hasSub}>
+            {hasSub && (
+              <SubList>
+                {current!.subItems!.map((sub) => (
+                  <li key={sub.name}>
+                    <SubLink href={sub.path}>{sub.name}</SubLink>
+                  </li>
+                ))}
+              </SubList>
+            )}
+          </RightPanel>
         </DropdownArea>
       )}
     </DropdownWrapper>
@@ -71,70 +76,78 @@ const DropdownWrapper = styled.div`
 `;
 
 const Trigger = styled(Link)`
-  color: #333;
+  color: ${({ theme }) => theme.colors.text};
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
 `;
 
-const DropdownArea = styled.div`
+const DropdownArea = styled.div<{ $hasSub: boolean }>`
   position: absolute;
-  top: 2.5rem;
+  top: calc(100% + 8px);
   left: 0;
-  display: flex;
-  background: #fff;
-  border: 1px solid #ddd;
+  display: grid;
+  /* 소분류가 있으면 2열, 없으면 1열 */
+  grid-template-columns: ${({ $hasSub }) =>
+    $hasSub ? "200px 240px" : "200px"};
+  align-items: stretch;
+  background: ${({ theme }) => theme.colors.bg};
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.radius.md};
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  min-width: 220px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   z-index: 1000;
+  overflow: hidden;
 `;
 
-const MiddleColumn = styled.div`
+const LeftColumn = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: 1rem;
-  min-width: 140px;
+  gap: 2px;
+  padding: 8px;
+  background: ${({ theme }) => theme.colors.bg};
 `;
 
 const CategoryItem = styled.div`
-  position: relative;
-  font-weight: bold;
-  cursor: pointer;
-  white-space: nowrap;
-  padding: 0.5rem 1rem;
+  border-radius: ${({ theme }) => theme.radius.sm};
   &:hover {
-    background: #f5f5f5;
+    background: ${({ theme }) => theme.colors.gray100};
+  }
+  &:focus {
+    outline: 2px solid ${({ theme }) => theme.colors.primary};
   }
 `;
 
-const CategoryLabel = styled.div`
-  font-weight: bold;
+const CategoryLink = styled(Link)`
+  display: block;
+  padding: 10px 12px;
+  color: ${({ theme }) => theme.colors.text};
+  text-decoration: none;
+  font-weight: 600;
 `;
 
-const SubMenu = styled.div`
-  position: absolute;
-  top: 0;
-  left: 100%;
-  margin-left: 1rem;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: ${({ theme }) => theme.radius.md};
-  padding: 1rem;
-  min-width: 140px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  z-index: 1001;
+const RightPanel = styled.div<{ $visible: boolean }>`
+  display: ${({ $visible }) => ($visible ? "block" : "none")};
+  border-left: 1px solid ${({ theme }) => theme.colors.border};
+  background: ${({ theme }) => theme.colors.bg};
+  padding: 8px;
+  min-height: 100%;
+`;
+
+const SubList = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding: 0;
 `;
 
 const SubLink = styled(Link)`
+  display: block;
+  padding: 10px 12px;
+  color: ${({ theme }) => theme.colors.text};
   text-decoration: none;
-  color: #333;
-  font-size: 0.95rem;
+  font-weight: 600;
+
   &:hover {
     color: #000;
+    text-decoration: underline;
   }
 `;
