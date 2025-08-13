@@ -1,4 +1,5 @@
 // src/app/layout.tsx
+
 export const metadata = {
   title: "My Commerce App",
   description: "My shopping app built with Next.js"
@@ -6,8 +7,6 @@ export const metadata = {
 
 import StyledComponentsRegistry from "./StyledComponentsRegistry";
 import ClientProviders from "./ClientProviders";
-import Header from "@/components/Header/Header";
-import ThemeProviderClient from "./ThemeProviderClient"; // ✅ 새 래퍼
 
 export default function RootLayout({
   children
@@ -17,21 +16,17 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        {/* 프리로드는 GlobalStyles의 실제 포맷과 맞추세요(woff/woff2 중 하나로 통일) */}
         <link
           rel="preload"
           as="font"
-          href="/fonts/Pretendard-Regular.woff"
-          type="font/woff"
+          href="/fonts/Pretendard.woff2"
+          type="font/woff2"
           crossOrigin="anonymous"
         />
       </head>
       <body>
         <StyledComponentsRegistry>
-          <ThemeProviderClient>
-            <Header />
-            <ClientProviders>{children}</ClientProviders>
-          </ThemeProviderClient>
+          <ClientProviders>{children}</ClientProviders>
         </StyledComponentsRegistry>
       </body>
     </html>

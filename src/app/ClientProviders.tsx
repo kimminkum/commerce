@@ -1,12 +1,11 @@
-// src/app/ClientProviders.tsx
 "use client";
 
-import { ThemeProvider } from "styled-components";
-import { theme } from "@/styles/theme"; // ← 변경: named import
 import QueryProvider from "@/providers/QueryProvider";
 import GlobalStyles from "@/styles/GlobalStyles";
 import SessionExpireWatcher from "@/components/SessionExpireWatcher";
-import Header from "@/components/Header/Header";
+
+// ⛔️ Header 제거 (중복 렌더 방지)
+// ⛔️ ThemeProvider는 layout.tsx에서 감싸는 걸 권장
 
 export default function ClientProviders({
   children
@@ -14,13 +13,10 @@ export default function ClientProviders({
   children: React.ReactNode;
 }) {
   return (
-    <ThemeProvider theme={theme}>
-      <QueryProvider>
-        <GlobalStyles />
-        <Header />
-        <SessionExpireWatcher />
-        {children}
-      </QueryProvider>
-    </ThemeProvider>
+    <QueryProvider>
+      <GlobalStyles />
+      <SessionExpireWatcher />
+      {children}
+    </QueryProvider>
   );
 }

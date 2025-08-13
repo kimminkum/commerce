@@ -1,5 +1,4 @@
 // src/styles/styled.d.ts
-/* eslint-disable @typescript-eslint/no-empty-object-type */
 import "styled-components";
 import type { AppTheme } from "./theme";
 

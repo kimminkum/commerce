@@ -20,18 +20,18 @@ export const theme = {
   },
   shadow: "0 2px 14px rgba(110,120,140,0.07)",
   spacing: {
-    sectionTop: "2.4rem",
-    gridGap: "1.5rem",
-    xs: "6px",
+    xs: "4px",
     sm: "8px",
     md: "12px",
-    lg: "16px",
-    xl: "24px"
+    lg: "16px", // 모바일 기본 좌우 여백
+    xl: "20px", // 데스크톱 좌우 여백
+    "2xl": "24px"
   },
   size: {
-    productImgH: "200px",
-    cartImgH: "84px",
-    containerMax: "1200px"
+    max: "1200px", // 컨텐츠 폭
+    gutterMobile: "16px",
+    gutterDesktop: "20px",
+    bannerMax: "1920px" // 배너 최대 폭
   },
   zIndex: { header: 1000, summaryBar: 900 }
 };
