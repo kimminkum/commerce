@@ -31,7 +31,9 @@ export const theme = {
     max: "1200px", // 컨텐츠 폭
     gutterMobile: "16px",
     gutterDesktop: "20px",
-    bannerMax: "1920px" // 배너 최대 폭
+    bannerMax: "1920px",
+    min: "360px",
+    cardMin: "180px"
   },
   zIndex: { header: 1000, summaryBar: 900 }
 };

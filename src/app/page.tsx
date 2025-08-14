@@ -54,7 +54,7 @@ export default function HomePage() {
         </BannerInner>
       </BannerSection>
 
-      {/* 본문: 1200px 컨테이너 + 좌우 여백 16/20px */}
+      {/* 본문: 1200px 컨테이너 + 좌우 16/20px + min-width */}
       <Main>
         <EventQuick>
           <EventLink href="/events/1">신상품 프로모션</EventLink>
@@ -144,28 +144,13 @@ const BannerSection = styled.section`
 const BannerInner = styled.div`
   width: 100%;
   max-width: ${({ theme }) => theme.size.bannerMax};
+  min-width: ${({ theme }) => theme.size.min}; /* ✅ 최소 폭 */
   margin: 0 auto;
 
   .swiper {
     border-radius: ${({ theme }) => theme.radius.card};
     overflow: hidden;
     box-shadow: ${({ theme }) => theme.shadow};
-  }
-
-  /* 내부 pagination을 좌하단에 배치 */
-  .swiper-pagination {
-    position: absolute;
-    left: 1.1rem;
-    bottom: 1.2rem;
-    width: auto;
-    text-align: left;
-    color: #fff;
-    font-size: 1.05rem;
-    font-weight: 500;
-    background: rgba(30, 36, 51, 0.2);
-    border-radius: ${({ theme }) => theme.radius.md};
-    padding: 0.17rem 0.9rem 0.2rem 0.9rem;
-    letter-spacing: 0.06em;
   }
 `;
 
@@ -209,9 +194,11 @@ const BannerDesc = styled.div`
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.16);
 `;
 
+/* 본문 컨테이너 */
 const Main = styled.main`
   width: 100%;
   max-width: ${({ theme }) => theme.size.max};
+  min-width: ${({ theme }) => theme.size.min}; /* ✅ 최소 폭 */
   margin: 0 auto;
   padding-left: ${({ theme }) => theme.size.gutterMobile};
   padding-right: ${({ theme }) => theme.size.gutterMobile};
@@ -277,11 +264,14 @@ const CatCard = styled(Link)`
   }
 `;
 
-/* 오늘의 추천: 모바일 2열 */
+/* 오늘의 추천: 모바일 2열 + 카드 최소 폭 토큰 사용 */
 const CardsGrid = styled.div`
   display: grid;
   gap: 1.7rem;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(${({ theme }) => theme.size.cardMin}, 1fr)
+  );
   @media (max-width: 600px) {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -337,6 +327,7 @@ const Footer = styled.footer`
 const FooterInner = styled.div`
   width: 100%;
   max-width: ${({ theme }) => theme.size.max};
+  min-width: ${({ theme }) => theme.size.min}; /* ✅ 최소 폭 */
   margin: 0 auto;
   padding-left: ${({ theme }) => theme.size.gutterMobile};
   padding-right: ${({ theme }) => theme.size.gutterMobile};
