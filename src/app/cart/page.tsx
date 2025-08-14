@@ -1,64 +1,82 @@
+// src/app/cart/page.tsx
 "use client";
-import { useMemo, useState } from "react";
-import { useCartStore } from "@/store/cartStore";
-import { useOrderStore } from "@/store/orderStore";
+
+import { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/navigation";
 import CartItemRow from "@/components/cart/CartItemRow";
+import { useCartStore } from "@/store/cartStore";
+import { useOrderStore } from "@/store/orderStore";
+import type { Product } from "@/types/product";
+
+const FREE_SHIPPING_THRESHOLD = 50; // 데모: $50 이상 무료
+const SHIPPING_FEE = 3.99; // 데모: 기본 배송비
 
 export default function CartPage() {
   const cart = useCartStore((s) => s.cart);
-  const quantities = useCartStore((s) => s.quantities); // ✅ 수량 맵을 구독
   const removeFromCart = useCartStore((s) => s.removeFromCart);
+  const clearCart = useCartStore((s) => s.clearCart);
+  const getQty = useCartStore((s) => s.getQty);
+
   const addOrder = useOrderStore((s) => s.addOrder);
   const router = useRouter();
 
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
 
-  const allIds = useMemo(() => cart.map((p) => p.id), [cart]);
+  // 카트 변경 시, 존재하지 않는 id는 선택 해제
+  useEffect(() => {
+    if (checkedIds.length === 0) return;
+    const idSet = new Set(cart.map((p) => p.id));
+    setCheckedIds((prev) => prev.filter((id) => idSet.has(id)));
+  }, [cart, checkedIds.length]);
+
+  const allIds = useMemo<number[]>(() => cart.map((p) => p.id), [cart]);
   const isAllChecked =
-    checkedIds.length > 0 && checkedIds.length === allIds.length;
+    checkedIds.length > 0 && checkedIds.length === cart.length;
 
   const handleCheck = (id: number) => {
     setCheckedIds((prev) =>
       prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
     );
   };
+
   const toggleAll = () => {
-    setCheckedIds(isAllChecked ? [] : allIds);
+    setCheckedIds((prev) => (prev.length === cart.length ? [] : [...allIds]));
   };
-  const removeSelected = () => {
-    if (checkedIds.length === 0) return;
-    if (!confirm("선택한 상품을 삭제할까요?")) return;
+
+  const handleDeleteSelected = () => {
+    if (checkedIds.length === 0) return alert("선택된 상품이 없습니다.");
     checkedIds.forEach((id) => removeFromCart(id));
     setCheckedIds([]);
   };
 
-  // ✅ quantities를 의존성에 포함 → 수량 변경 시 합계 즉시 갱신
-  const { selectedSubtotal, shipping, grandTotal } = useMemo(() => {
-    const subtotal = cart
-      .filter((p) => checkedIds.includes(p.id))
-      .reduce((sum, p) => sum + p.price * (quantities[p.id] ?? 1), 0);
-    const shippingFee = subtotal >= 50000 || subtotal === 0 ? 0 : 3000;
-    return {
-      selectedSubtotal: subtotal,
-      shipping: shippingFee,
-      grandTotal: subtotal + shippingFee
-    };
-  }, [cart, checkedIds, quantities]);
-
   const handleOrderSelected = () => {
-    const selected = cart.filter((p) => checkedIds.includes(p.id));
+    const selected: Product[] = cart.filter((p) => checkedIds.includes(p.id));
     if (selected.length === 0) return alert("선택된 상품이 없습니다.");
+
     addOrder({
       id: Date.now().toString(),
       items: selected,
       date: new Date().toLocaleString()
     });
-    selected.forEach((item) => removeFromCart(item.id));
+
+    // 선택 항목만 제거
+    selected.forEach((p) => removeFromCart(p.id));
     setCheckedIds([]);
     router.replace("/order/complete");
   };
+
+  // 합계 계산 (수량은 store의 getQty(id) 사용)
+  const { subtotal, shipping, total } = useMemo(() => {
+    const selected = cart.filter((p) => checkedIds.includes(p.id));
+    const sum = selected.reduce(
+      (acc, p) => acc + p.price * (getQty(p.id) ?? 1),
+      0
+    );
+    const ship =
+      sum === 0 ? 0 : sum >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+    return { subtotal: sum, shipping: ship, total: sum + ship };
+  }, [cart, checkedIds, getQty]);
 
   if (cart.length === 0) return <Empty>장바구니가 비었습니다.</Empty>;
 
@@ -72,27 +90,44 @@ export default function CartPage() {
               checked={isAllChecked}
               onChange={toggleAll}
               aria-label="전체 선택"
-            />{" "}
-            전체 선택
+            />
+            <span>전체 선택</span>
           </label>
-          <DividerV />
-          <ActionTextButton
-            onClick={removeSelected}
+          <Divider />
+          <ActionText
+            type="button"
+            onClick={handleDeleteSelected}
             disabled={checkedIds.length === 0}
+            aria-disabled={checkedIds.length === 0}
           >
             선택 삭제
-          </ActionTextButton>
+          </ActionText>
+          <ActionText
+            type="button"
+            onClick={() => {
+              if (confirm("모든 상품을 삭제하시겠어요?")) {
+                clearCart();
+                setCheckedIds([]);
+              }
+            }}
+          >
+            전체 삭제
+          </ActionText>
         </LeftControls>
+
         <Right>
           <span>선택 {checkedIds.length}개</span>
-          <PrimaryButton onClick={handleOrderSelected}>
+          <OrderButton
+            onClick={handleOrderSelected}
+            disabled={checkedIds.length === 0}
+          >
             선택 상품 주문
-          </PrimaryButton>
+          </OrderButton>
         </Right>
       </TopBar>
 
-      <List>
-        {cart.map((product) => (
+      <List role="list">
+        {cart.map((product: Product) => (
           <CartItemRow
             key={product.id}
             product={product}
@@ -103,41 +138,50 @@ export default function CartPage() {
         ))}
       </List>
 
+      {/* 하단 고정 요약 바 (sticky) */}
       <SummaryBar role="region" aria-label="주문 요약">
-        <SummaryRow>
-          <dl>
-            <div>
-              <dt>상품 합계</dt>
-              <dd>{selectedSubtotal.toLocaleString()}원</dd>
-            </div>
-            <div>
-              <dt>배송비</dt>
-              <dd>{shipping.toLocaleString()}원</dd>
-            </div>
-            <div className="total">
-              <dt>총 결제금액</dt>
-              <dd>{grandTotal.toLocaleString()}원</dd>
-            </div>
-          </dl>
-          <PrimaryButton
+        <SummaryLeft aria-live="polite">
+          <Row>
+            <span>상품 합계</span>
+            <strong>{subtotal.toLocaleString()}</strong>
+          </Row>
+          <Row>
+            <span>배송비</span>
+            <strong>{shipping.toLocaleString()}</strong>
+          </Row>
+          <Row className="total">
+            <span>총 결제금액</span>
+            <strong>{total.toLocaleString()}</strong>
+          </Row>
+        </SummaryLeft>
+
+        <SummaryRight>
+          <OrderButton
             onClick={handleOrderSelected}
             disabled={checkedIds.length === 0}
             aria-disabled={checkedIds.length === 0}
           >
-            선택 상품 주문
-          </PrimaryButton>
-        </SummaryRow>
-        <Hint>₩50,000 이상 무료배송</Hint>
+            선택 {checkedIds.length}개 주문
+          </OrderButton>
+        </SummaryRight>
       </SummaryBar>
     </Wrapper>
   );
 }
 
-// --- styles ---
+/* --- styles --- */
 const Wrapper = styled.div`
-  padding: 2rem 1.25rem 8rem;
-  max-width: 980px;
+  width: 100%;
+  max-width: ${({ theme }) => theme.size.max};
   margin: 0 auto;
+  /* 아래 sticky summary 높이 고려 */
+  padding: 2rem 0 6.5rem 0;
+  padding-left: ${({ theme }) => theme.size.gutterMobile};
+  padding-right: ${({ theme }) => theme.size.gutterMobile};
+  @media (min-width: 768px) {
+    padding-left: ${({ theme }) => theme.size.gutterDesktop};
+    padding-right: ${({ theme }) => theme.size.gutterDesktop};
+  }
 `;
 
 const TopBar = styled.div`
@@ -145,24 +189,56 @@ const TopBar = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 1rem;
+
+  h1 {
+    font-size: 1.5rem;
+  }
 `;
+
 const LeftControls = styled.div`
   display: flex;
   align-items: center;
   gap: 12px;
+  color: ${({ theme }) => theme.colors.subtext};
+
   label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     cursor: pointer;
-    input {
-      accent-color: ${({ theme }) => theme.colors.primary};
-    }
+  }
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
   }
 `;
-const DividerV = styled.span`
+
+const Divider = styled.span`
+  display: inline-block;
   width: 1px;
   height: 16px;
   background: ${({ theme }) => theme.colors.border};
-  display: inline-block;
+  margin: 0 6px;
 `;
+
+const ActionText = styled.button`
+  background: none;
+  border: 0;
+  color: ${({ theme }) => theme.colors.text};
+  padding: 0;
+  font-size: 0.95rem;
+  opacity: 0.85;
+  &:hover {
+    opacity: 1;
+    text-decoration: underline;
+  }
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    text-decoration: none;
+  }
+`;
+
 const Right = styled.div`
   display: flex;
   align-items: center;
@@ -177,89 +253,81 @@ const List = styled.ul`
   gap: 14px;
 `;
 
-const PrimaryButton = styled.button`
+const OrderButton = styled.button<{ disabled?: boolean }>`
   padding: 0.9rem 1.6rem;
   font-size: 1rem;
-  background: ${({ theme }) => theme.colors.primary};
+  background: ${({ theme, disabled }) =>
+    disabled ? theme.colors.gray200 : theme.colors.primary};
   color: #fff;
   border: none;
   border-radius: ${({ theme }) => theme.radius.md};
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+  transition: background 0.15s ease;
   &:hover {
-    background: ${({ theme }) => theme.colors.primaryHover};
-  }
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-`;
-
-const ActionTextButton = styled.button`
-  border: 0;
-  background: transparent;
-  color: ${({ theme }) => theme.colors.subtext};
-  cursor: pointer;
-  padding: 0.25rem 0.4rem;
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  &:hover:enabled {
-    color: ${({ theme }) => theme.colors.text};
-    text-decoration: underline;
+    background: ${({ theme, disabled }) =>
+      disabled ? theme.colors.gray200 : theme.colors.primaryHover};
   }
 `;
 
 const SummaryBar = styled.aside`
   position: sticky;
   bottom: 0;
-  left: 0;
-  right: 0;
-  background: ${({ theme }) => theme.colors.bg};
-  border-top: 1px solid ${({ theme }) => theme.colors.border};
-  box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.04);
-  margin-top: 1.5rem;
-`;
-
-const SummaryRow = styled.div`
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 0.9rem 0.25rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  flex-direction: column;
 
-  dl {
-    display: flex;
-    gap: 1.2rem;
-    margin: 0;
+  background: ${({ theme }) => theme.colors.bg};
+  border-top: 1px solid ${({ theme }) => theme.colors.border};
+  padding: 0.9rem 0;
+  padding-left: ${({ theme }) => theme.size.gutterMobile};
+  padding-right: ${({ theme }) => theme.size.gutterMobile};
+  box-shadow: 0 -6px 18px rgba(20, 24, 40, 0.05);
+
+  @supports (backdrop-filter: blur(4px)) {
+    background: color-mix(
+      in oklab,
+      ${({ theme }) => theme.colors.bg} 90%,
+      #fff
+    );
+    backdrop-filter: blur(4px);
   }
-  dt {
+
+  @media (min-width: 768px) {
+    padding-left: ${({ theme }) => theme.size.gutterDesktop};
+    padding-right: ${({ theme }) => theme.size.gutterDesktop};
+    flex-direction: row;
+  }
+`;
+
+const SummaryLeft = styled.div`
+  display: grid;
+  gap: 6px;
+  .total strong {
+    color: ${({ theme }) => theme.colors.primary};
+    font-size: 1.12rem;
+  }
+`;
+
+const Row = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0px;
+
+  span {
     color: ${({ theme }) => theme.colors.subtext};
-    font-weight: 500;
-    margin-right: 0.35rem;
+    width: 90px;
   }
-  dd {
-    margin: 0;
-    color: ${({ theme }) => theme.colors.text};
-    font-weight: 700;
-  }
-  .total dt,
-  .total dd {
-    font-size: 1.05rem;
+  strong {
+    min-width: 100px;
+    text-align: right;
   }
 `;
 
-const Hint = styled.p`
-  max-width: 980px;
-  margin: 0.2rem auto 0.7rem;
-  color: ${({ theme }) => theme.colors.subtext};
-  font-size: 0.92rem;
-`;
+const SummaryRight = styled.div``;
 
 const Empty = styled.div`
   padding: 2.5rem;
   text-align: center;
-  color: ${({ theme }) => theme.colors.subtext};
 `;

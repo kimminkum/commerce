@@ -1,3 +1,4 @@
+// src/app/page.tsx
 "use client";
 
 import styled from "styled-components";
@@ -8,7 +9,7 @@ import { Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 
-// 샘플 배너 이미지 (풀블리드, 최대 1920px)
+/** 배너 데이터 (최대 1920px) */
 const bannerData = [
   {
     img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80",
@@ -34,12 +35,8 @@ export default function HomePage() {
             modules={[Pagination, Autoplay]}
             slidesPerView={1}
             loop
-            autoplay={{ delay: 3500, disableOnInteraction: false }}
-            pagination={{
-              type: "fraction",
-              clickable: true,
-              el: ".banner-swiper-pagination"
-            }}
+            autoplay={{ delay: 2500, disableOnInteraction: false }}
+            pagination={{ type: "fraction", clickable: true }}
             style={{ position: "relative" }}
           >
             {bannerData.map((bn, idx) => (
@@ -53,20 +50,17 @@ export default function HomePage() {
                 </BannerSlide>
               </SwiperSlide>
             ))}
-            <BannerPagination className="banner-swiper-pagination" />
           </Swiper>
         </BannerInner>
       </BannerSection>
 
       {/* 본문: 1200px 컨테이너 + 좌우 여백 16/20px */}
       <Main>
-        {/* 이벤트 퀵 링크 */}
         <EventQuick>
           <EventLink href="/events/1">신상품 프로모션</EventLink>
           <EventLink href="/events/2">오늘의 특가 이벤트</EventLink>
         </EventQuick>
 
-        {/* 카테고리 */}
         <MainSection>
           <SectionTitle>🔥 인기 카테고리 바로가기</SectionTitle>
           <CategoryGrid>
@@ -78,7 +72,6 @@ export default function HomePage() {
           </CategoryGrid>
         </MainSection>
 
-        {/* 오늘의 추천: 모바일 2열 */}
         <MainSection>
           <SectionTitle>💎 오늘의 추천 상품</SectionTitle>
           <CardsGrid>
@@ -118,7 +111,6 @@ export default function HomePage() {
           </CardsGrid>
         </MainSection>
 
-        {/* 퀵 이동 */}
         <MainSection>
           <SectionTitle>🚀 빠른 서비스 이동</SectionTitle>
           <QuickNav>
@@ -130,16 +122,13 @@ export default function HomePage() {
         </MainSection>
       </Main>
 
-      {/* 푸터 */}
       <Footer>
         <FooterInner>
           <div>
             <strong>My Commerce Demo</strong> <br />
             (c) 김민겸 포트폴리오
           </div>
-          <div>
-            <a href="mailto:h24breaker@naver.com">문의: h24breaker@naver.com</a>
-          </div>
+          <div>문의: h24breaker@naver.com</div>
         </FooterInner>
       </Footer>
     </>
@@ -148,11 +137,9 @@ export default function HomePage() {
 
 /* --- 스타일 --- */
 
-/* 배너: 전체 폭 + 최대 1920px */
 const BannerSection = styled.section`
   width: 100%;
   margin: 2.5rem 0 1.5rem 0;
-  background: transparent;
 `;
 const BannerInner = styled.div`
   width: 100%;
@@ -164,7 +151,24 @@ const BannerInner = styled.div`
     overflow: hidden;
     box-shadow: ${({ theme }) => theme.shadow};
   }
+
+  /* 내부 pagination을 좌하단에 배치 */
+  .swiper-pagination {
+    position: absolute;
+    left: 1.1rem;
+    bottom: 1.2rem;
+    width: auto;
+    text-align: left;
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 500;
+    background: rgba(30, 36, 51, 0.2);
+    border-radius: ${({ theme }) => theme.radius.md};
+    padding: 0.17rem 0.9rem 0.2rem 0.9rem;
+    letter-spacing: 0.06em;
+  }
 `;
+
 const BannerSlide = styled(Link)`
   display: block;
   position: relative;
@@ -204,23 +208,7 @@ const BannerDesc = styled.div`
   opacity: 0.96;
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.16);
 `;
-const BannerPagination = styled.div`
-  position: absolute;
-  left: 1.1rem;
-  bottom: 1.2rem;
-  z-index: 10;
-  color: #fff;
-  .swiper-pagination-fraction {
-    font-size: 1.05rem;
-    font-weight: 500;
-    background: rgba(30, 36, 51, 0.2);
-    border-radius: ${({ theme }) => theme.radius.md};
-    padding: 0.17rem 0.9rem 0.2rem 0.9rem;
-    letter-spacing: 0.06em;
-  }
-`;
 
-/* 본문 컨테이너: 1200 + 좌우 16/20px */
 const Main = styled.main`
   width: 100%;
   max-width: ${({ theme }) => theme.size.max};
@@ -258,7 +246,6 @@ const EventLink = styled(Link)`
 const MainSection = styled.section`
   margin: 2.4rem 0 2.6rem 0;
 `;
-
 const SectionTitle = styled.h2`
   font-size: 1.23rem;
   font-weight: 700;
@@ -308,7 +295,6 @@ const ProductCard = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-
   .price {
     color: ${({ theme }) => theme.colors.primary};
     font-weight: bold;
@@ -354,7 +340,6 @@ const FooterInner = styled.div`
   margin: 0 auto;
   padding-left: ${({ theme }) => theme.size.gutterMobile};
   padding-right: ${({ theme }) => theme.size.gutterMobile};
-
   color: ${({ theme }) => theme.colors.text};
   font-size: 1.05rem;
   display: flex;
