@@ -8,14 +8,14 @@ import { useRouter } from "next/navigation";
 export default function OrderCompletePage() {
   const router = useRouter();
 
-  // 선택: 3초 뒤 자동 이동
+  // 3초 뒤 자동 이동
   useEffect(() => {
     const t = setTimeout(() => router.push("/protected"), 3000);
     return () => clearTimeout(t);
   }, [router]);
 
   return (
-    <Wrap>
+    <Wrap role="status" aria-live="polite">
       <Card>
         <Emoji>✅</Emoji>
         <Title>주문이 완료되었습니다</Title>
@@ -34,11 +34,22 @@ export default function OrderCompletePage() {
 }
 
 const Wrap = styled.div`
+  width: 100%;
+  max-width: ${({ theme }) => theme.size.max};
+  min-width: ${({ theme }) => theme.size.min};
+  margin: 0 auto;
+  padding: 2rem 0;
+  padding-left: ${({ theme }) => theme.size.gutterMobile};
+  padding-right: ${({ theme }) => theme.size.gutterMobile};
   min-height: 60vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+
+  @media (min-width: 768px) {
+    padding-left: ${({ theme }) => theme.size.gutterDesktop};
+    padding-right: ${({ theme }) => theme.size.gutterDesktop};
+  }
 `;
 
 const Card = styled.div`

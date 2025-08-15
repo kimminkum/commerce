@@ -120,6 +120,7 @@ export default function CartPage() {
           <OrderButton
             onClick={handleOrderSelected}
             disabled={checkedIds.length === 0}
+            aria-disabled={checkedIds.length === 0}
           >
             선택 상품 주문
           </OrderButton>
@@ -173,6 +174,7 @@ export default function CartPage() {
 const Wrapper = styled.div`
   width: 100%;
   max-width: ${({ theme }) => theme.size.max};
+  min-width: ${({ theme }) => theme.size.min};
   margin: 0 auto;
   /* 아래 sticky summary 높이 고려 */
   padding: 2rem 0 6.5rem 0;

@@ -13,8 +13,8 @@ export default function ProtectedPage() {
     <Wrapper>
       <Title>마이페이지</Title>
 
-      <Section>
-        <SectionLabel>
+      <Section aria-labelledby="cart-heading">
+        <SectionLabel id="cart-heading">
           <MdShoppingCart size={22} style={{ marginRight: 6 }} />
           장바구니
         </SectionLabel>
@@ -34,11 +34,12 @@ export default function ProtectedPage() {
 
       <Divider />
 
-      <Section>
-        <SectionLabel>
+      <Section aria-labelledby="order-heading">
+        <SectionLabel id="order-heading">
           <MdListAlt size={22} style={{ marginRight: 6 }} />
           주문 내역
         </SectionLabel>
+
         {orders.length === 0 ? (
           <EmptyBox>
             <MdListAlt size={32} />
@@ -46,11 +47,12 @@ export default function ProtectedPage() {
           </EmptyBox>
         ) : (
           <OrderTable>
+            <caption className="sr-only">주문 내역 표</caption>
             <thead>
               <tr>
-                <th>주문번호</th>
-                <th>상품</th>
-                <th>날짜</th>
+                <th scope="col">주문번호</th>
+                <th scope="col">상품</th>
+                <th scope="col">날짜</th>
               </tr>
             </thead>
             <tbody>
@@ -78,49 +80,63 @@ export default function ProtectedPage() {
 }
 
 const Wrapper = styled.div`
-  padding: 2rem;
-  max-width: 960px;
+  width: 100%;
+  max-width: ${({ theme }) => theme.size.max};
+  min-width: ${({ theme }) => theme.size.min};
   margin: 0 auto;
-`;
+  padding: 2rem 0;
+  padding-left: ${({ theme }) => theme.size.gutterMobile};
+  padding-right: ${({ theme }) => theme.size.gutterMobile};
+  @media (min-width: 768px) {
+    padding-left: ${({ theme }) => theme.size.gutterDesktop};
+    padding-right: ${({ theme }) => theme.size.gutterDesktop};
+  }
 
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+`;
 const Title = styled.h1`
   font-size: 2rem;
   margin-bottom: 2rem;
-  font-weight: bold;
+  font-weight: 800;
   text-align: center;
-  color: ${({ theme }) => theme.colors.text};
 `;
-
 const Section = styled.section`
   margin-bottom: 2.5rem;
 `;
-
 const SectionLabel = styled.h2`
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 700;
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
-  color: ${({ theme }) => theme.colors.text};
 `;
-
 const Divider = styled.hr`
-  margin: 2.5rem 0 2.5rem 0;
+  margin: 2.5rem 0;
   border: 0;
   border-top: 1px solid ${({ theme }) => theme.colors.border};
 `;
-
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(${({ theme }) => theme.size.cardMin}, 1fr)
+  );
   gap: 1.5rem;
 `;
-
 const OrderTable = styled.table`
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
-
   th,
   td {
     border: 1px solid ${({ theme }) => theme.colors.border};
@@ -128,15 +144,12 @@ const OrderTable = styled.table`
     font-size: 1rem;
     text-align: left;
     word-break: break-all;
-    color: ${({ theme }) => theme.colors.text};
   }
-
   th {
     background: ${({ theme }) => theme.colors.gray100};
-    font-weight: 600;
+    font-weight: 700;
   }
 `;
-
 const EmptyBox = styled.div`
   padding: 2.5rem 0;
   text-align: center;

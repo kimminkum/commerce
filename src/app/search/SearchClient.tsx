@@ -1,5 +1,4 @@
 "use client";
-
 import { useSearchParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import ProductCard from "@/components/ProductCard";
@@ -13,24 +12,28 @@ const fetchProducts = async (): Promise<Product[]> => {
 };
 
 export default function SearchClient() {
-  const searchParams = useSearchParams();
-  const keyword = searchParams.get("keyword")?.toLowerCase() ?? "";
-
-  const { data, isLoading, error } = useQuery({
+  const keyword = (useSearchParams().get("keyword") ?? "").toLowerCase();
+  const { data, isLoading, error, isFetching } = useQuery({
     queryKey: ["products"],
     queryFn: fetchProducts
   });
 
-  const filtered = (data ?? []).filter((product: Product) =>
-    product.title.toLowerCase().includes(keyword)
+  const filtered = (data ?? []).filter((p: Product) =>
+    p.title.toLowerCase().includes(keyword)
   );
 
-  if (isLoading) return <Message>검색 중...</Message>;
-  if (error) return <Message>검색 오류</Message>;
+  if (isLoading)
+    return (
+      <Message role="status" aria-live="polite">
+        검색 중...
+      </Message>
+    );
+  if (error) return <Message role="alert">검색 오류</Message>;
 
   return (
-    <Wrapper>
-      <h1>🔍 검색 결과: &quot;{keyword}&quot;</h1>
+    <Wrapper role="main" aria-busy={isFetching}>
+      <h1>🔍 검색 결과: “{keyword}”</h1>
+      <ResultCount aria-live="polite">총 {filtered.length}건</ResultCount>
       {filtered.length === 0 ? (
         <Message>일치하는 상품이 없습니다.</Message>
       ) : (
@@ -44,9 +47,22 @@ export default function SearchClient() {
   );
 }
 
-// 스타일 (동일)
 const Wrapper = styled.section`
-  padding: 2rem;
+  width: 100%;
+  max-width: ${({ theme }) => theme.size.max};
+  min-width: ${({ theme }) => theme.size.min};
+  margin: 0 auto;
+  padding: 2rem 0;
+  padding-left: ${({ theme }) => theme.size.gutterMobile};
+  padding-right: ${({ theme }) => theme.size.gutterMobile};
+  @media (min-width: 768px) {
+    padding-left: ${({ theme }) => theme.size.gutterDesktop};
+    padding-right: ${({ theme }) => theme.size.gutterDesktop};
+  }
+`;
+const ResultCount = styled.div`
+  color: ${({ theme }) => theme.colors.subtext};
+  margin: 0.4rem 0 1rem;
 `;
 const Message = styled.div`
   padding: 2rem;
@@ -54,6 +70,9 @@ const Message = styled.div`
 `;
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(${({ theme }) => theme.size.cardMin}, 1fr)
+  );
   gap: 1.5rem;
 `;

@@ -1,5 +1,4 @@
 "use client";
-
 import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import styled from "styled-components";
@@ -16,20 +15,13 @@ const fetchProduct = async (id: string) => {
 };
 
 export default function ProductDetailPage() {
-  const params = useParams();
-  const { id } = params as { id: string };
-
-  // 찜
+  const { id } = useParams<{ id: string }>();
   const { toggleWishlist, isInWishlist } = useProductStore();
-
-  // 장바구니
   const cart = useCartStore((s) => s.cart);
   const addToCart = useCartStore((s) => s.addToCart);
   const removeFromCart = useCartStore((s) => s.removeFromCart);
-
-  // 안전한 isInCart
   const isInCart = useCallback(
-    (productId: number) => cart.some((item) => item.id === productId),
+    (pid: number) => cart.some((i) => i.id === pid),
     [cart]
   );
 
@@ -42,7 +34,7 @@ export default function ProductDetailPage() {
     error
   } = useQuery({
     queryKey: ["product", id],
-    queryFn: () => fetchProduct(id),
+    queryFn: () => fetchProduct(id!),
     enabled: !!id
   });
 
@@ -50,13 +42,9 @@ export default function ProductDetailPage() {
   if (error || !product)
     return <Message>상품 정보를 불러올 수 없습니다.</Message>;
 
-  // 장바구니 토글
   const handleCart = () => {
-    if (isInCart(product.id)) {
-      removeFromCart(product.id);
-    } else {
-      addToCart(product);
-    }
+    if (isInCart(product.id)) removeFromCart(product.id);
+    else addToCart(product);
   };
 
   return (
@@ -65,8 +53,13 @@ export default function ProductDetailPage() {
         <Image
           src={product.image}
           alt={product.title}
-          width={380}
-          height={380}
+          width={420}
+          height={420}
+          style={{
+            borderRadius: "8px",
+            background: "#f6f6f6",
+            objectFit: "contain"
+          }}
           priority
         />
       </ImageBox>
@@ -98,6 +91,7 @@ export default function ProductDetailPage() {
               });
               router.replace("/order/complete");
             }}
+            aria-label="바로 주문"
           >
             🏷️ 바로 주문
           </ActionBtn>
@@ -107,60 +101,54 @@ export default function ProductDetailPage() {
   );
 }
 
-// --- Styled Components --- //
 const DetailWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
+  width: 100%;
+  max-width: ${({ theme }) => theme.size.max};
+  min-width: ${({ theme }) => theme.size.min};
+  margin: 0 auto;
+  padding: 2rem 0;
+  padding-left: ${({ theme }) => theme.size.gutterMobile};
+  padding-right: ${({ theme }) => theme.size.gutterMobile};
+  display: grid;
   gap: 2rem;
-  padding: 2rem;
   @media (min-width: 800px) {
-    flex-direction: row;
+    grid-template-columns: 1fr 1.4fr;
+  }
+  @media (min-width: 768px) {
+    padding-left: ${({ theme }) => theme.size.gutterDesktop};
+    padding-right: ${({ theme }) => theme.size.gutterDesktop};
   }
 `;
-const ImageBox = styled.div`
-  flex: 1;
-  min-width: 280px;
-  img {
-    width: 100%;
-    max-width: 380px;
-    border-radius: ${({ theme }) => theme.radius.md};
-    background: ${({ theme }) => theme.colors.gray100};
-    object-fit: contain;
-  }
-`;
+const ImageBox = styled.div``;
 const Info = styled.div`
-  flex: 2;
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 1rem;
-
-  h1 {
-    color: ${({ theme }) => theme.colors.text};
-  }
 `;
 const Price = styled.div`
   font-size: 1.2rem;
-  font-weight: bold;
+  font-weight: 800;
 `;
 const Description = styled.div`
-  color: ${({ theme }) => theme.colors.subtext};
+  color: #555;
   margin: 0.5rem 0 1rem 0;
 `;
 const ActionGroup = styled.div`
   display: flex;
-  gap: 1rem;
+  gap: 0.8rem;
+  flex-wrap: wrap;
 `;
 const ActionBtn = styled.button`
-  padding: 0.5rem 1.2rem;
-  border-radius: ${({ theme }) => theme.radius.sm};
-  border: none;
-  background: ${({ theme }) => theme.colors.gray100};
+  padding: 0.55rem 1.1rem;
+  border-radius: ${({ theme }) => theme.radius.md};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  background: #fff;
   font-size: 1rem;
   cursor: pointer;
   &:hover {
-    background: ${({ theme }) => theme.colors.gray200};
+    background: ${({ theme }) => theme.colors.gray100};
   }
 `;
 const Message = styled.div`
   padding: 2rem;
+  text-align: center;
 `;
