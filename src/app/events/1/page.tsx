@@ -12,8 +12,6 @@ export default function Event1Page() {
         width={1600}
         height={480}
         priority
-        sizes="(max-width: 768px) 100vw, 1200px"
-        quality={80}
       />
       <Title>🔥 2025 신상품 프로모션 – 오늘만 특가!</Title>
       <SubTitle>아마존 & 11번가 스타일로 구성한 베스트 아이템</SubTitle>

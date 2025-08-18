@@ -5,7 +5,6 @@ export const theme = {
     primaryHover: "#0033A5",
     gray100: "#F6F7FA",
     gray200: "#E6E9F1",
-    gray600: "#aaa",
     text: "#111111",
     subtext: "#555",
     border: "#E6E9F1",

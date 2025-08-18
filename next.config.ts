@@ -4,8 +4,7 @@ const nextConfig = {
     styledComponents: true
   },
   images: {
-    domains: ["fakestoreapi.com", "images.unsplash.com"],
-    formats: ["image/avif", "image/webp"]
+    domains: ["fakestoreapi.com", "images.unsplash.com"]
   }
 };
 
