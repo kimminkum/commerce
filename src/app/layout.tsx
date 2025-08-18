@@ -7,7 +7,8 @@ export const metadata = {
 import StyledComponentsRegistry from "./StyledComponentsRegistry";
 import ClientProviders from "./ClientProviders";
 import Header from "@/components/Header/Header";
-import ThemeProviderClient from "./ThemeProviderClient"; // ✅ 새 래퍼
+import Footer from "@/components/layout/Footer";
+import ThemeProviderClient from "./ThemeProviderClient";
 
 export default function RootLayout({
   children
@@ -31,6 +32,7 @@ export default function RootLayout({
           <ThemeProviderClient>
             <Header />
             <ClientProviders>{children}</ClientProviders>
+            <Footer />
           </ThemeProviderClient>
         </StyledComponentsRegistry>
       </body>
