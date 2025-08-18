@@ -3,7 +3,6 @@
 
 import AuthForm from "@/components/AuthForm";
 import { useRouter } from "next/navigation";
-import { signIn } from "@/auth/authService";
 import { useAuthStore } from "@/store/authStore";
 
 export default function LoginPage() {
@@ -12,6 +11,7 @@ export default function LoginPage() {
 
   const handleLogin = async (email: string, password: string) => {
     try {
+      const { signIn } = await import("@/auth/authService");
       const user = await signIn(email, password);
       if (!user.uid || !user.email)
         throw new Error("잘못된 사용자 정보입니다.");

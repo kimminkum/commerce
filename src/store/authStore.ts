@@ -23,7 +23,14 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
       setUser: (user, expiresAt = null) => set({ user, expiresAt }),
       setLoading: (isLoading) => set({ isLoading }),
-      logout: () => set({ user: null, expiresAt: null })
+      logout: async () => {
+        try {
+          const { logout } = await import("@/auth/authService");
+          await logout();
+        } finally {
+          set({ user: null, expiresAt: null });
+        }
+      }
     }),
     { name: "auth-storage" }
   )
