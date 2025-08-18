@@ -6,12 +6,24 @@ import MobileAccordion from "./MobileAccordion";
 import SearchBar from "./SearchBar";
 import { useAuthStore } from "@/store/authStore";
 
-export default function MobileMenu({ closeMenu }: { closeMenu: () => void }) {
+export default function MobileMenu({
+  closeMenu,
+  id
+}: {
+  closeMenu: () => void;
+  id?: string;
+}) {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
   return (
     <Overlay onClick={closeMenu}>
-      <Drawer onClick={(e) => e.stopPropagation()}>
+      <Drawer
+        id={id}
+        role="dialog"
+        aria-modal="true"
+        aria-label="모바일 메뉴"
+        onClick={(e) => e.stopPropagation()}
+      >
         <CloseBtn onClick={closeMenu} aria-label="닫기">
           ✕
         </CloseBtn>
@@ -68,6 +80,7 @@ const Drawer = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
+  padding-top: 40px;
 `;
 
 const CloseBtn = styled.button`

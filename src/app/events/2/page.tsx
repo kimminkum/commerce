@@ -12,6 +12,8 @@ export default function Event2Page() {
         width={1600}
         height={480}
         priority
+        sizes="(max-width: 768px) 100vw, 1200px"
+        quality={80}
       />
       <Title>🎉 회원 전용 쿠폰 증정</Title>
       <SubTitle>오늘 가입만 해도 10% 쿠폰 즉시 지급!</SubTitle>

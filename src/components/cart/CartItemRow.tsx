@@ -41,6 +41,8 @@ export default function CartItemRow({
           alt={product.title}
           width={96}
           height={96}
+          sizes="96px"
+          decoding="async"
           style={{ objectFit: "contain" }}
         />
       </Thumb>
