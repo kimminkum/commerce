@@ -2,9 +2,7 @@
 "use client";
 import styled from "styled-components";
 import Link from "next/link";
-import dynamic from "next/dynamic";
-
-const NavDropdown = dynamic(() => import("./NavDropdown"), { ssr: false });
+import NavDropdown from "./NavDropdown";
 
 export default function Nav() {
   return (

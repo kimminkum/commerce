@@ -1,4 +1,6 @@
+// src/app/ThemeProviderClient.tsx
 "use client";
+
 import { ThemeProvider } from "styled-components";
 import { theme } from "@/styles/theme";
 

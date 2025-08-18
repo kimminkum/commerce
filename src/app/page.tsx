@@ -4,19 +4,57 @@
 import styled from "styled-components";
 import Link from "next/link";
 import Image from "next/image";
-import HomeBanner from "@/components/home/HomeBanner";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Autoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
+
+/** 배너 데이터 (최대 1920px) */
+const bannerData = [
+  {
+    img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1920&q=80",
+    link: "/events/1",
+    title: "🚀 신규 입점 기획전 OPEN",
+    desc: "올여름 특가! 한정 기간 이벤트"
+  },
+  {
+    img: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=1920&q=80",
+    link: "/events/2",
+    title: "🎉 회원 전용 쿠폰 증정",
+    desc: "오늘 가입만 해도 10% 쿠폰 즉시 지급!"
+  }
+];
 
 export default function HomePage() {
   return (
     <>
-      {/* 배너 */}
+      {/* 배너: 화면 가득 + 중앙 정렬, 최대 1920px */}
       <BannerSection>
         <BannerInner>
-          <HomeBanner />
+          <Swiper
+            modules={[Pagination, Autoplay]}
+            slidesPerView={1}
+            loop
+            autoplay={{ delay: 2500, disableOnInteraction: false }}
+            pagination={{ type: "fraction", clickable: true }}
+            style={{ position: "relative" }}
+          >
+            {bannerData.map((bn, idx) => (
+              <SwiperSlide key={idx}>
+                <BannerSlide as={Link} href={bn.link}>
+                  <BannerImg src={bn.img} alt={bn.title} />
+                  <BannerOverlay>
+                    <BannerTitle>{bn.title}</BannerTitle>
+                    <BannerDesc>{bn.desc}</BannerDesc>
+                  </BannerOverlay>
+                </BannerSlide>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </BannerInner>
       </BannerSection>
 
-      {/* 본문 */}
+      {/* 본문: 1200px 컨테이너 + 좌우 16/20px + min-width */}
       <Main>
         <EventQuick>
           <EventLink href="/events/1">신상품 프로모션</EventLink>
@@ -87,33 +125,81 @@ export default function HomePage() {
   );
 }
 
-/* --- styles 그대로 --- */
+/* --- 스타일 --- */
+
 const BannerSection = styled.section`
   width: 100%;
-  margin: 2.5rem 0 1.5rem;
+  margin: 2.5rem 0 1.5rem 0;
 `;
 const BannerInner = styled.div`
   width: 100%;
   max-width: ${({ theme }) => theme.size.bannerMax};
-  min-width: ${({ theme }) => theme.size.min};
+  min-width: ${({ theme }) => theme.size.min}; /* ✅ 최소 폭 */
   margin: 0 auto;
+
   .swiper {
     border-radius: ${({ theme }) => theme.radius.card};
     overflow: hidden;
     box-shadow: ${({ theme }) => theme.shadow};
   }
 `;
+
+const BannerSlide = styled(Link)`
+  display: block;
+  position: relative;
+  min-height: 260px;
+`;
+const BannerImg = styled.img`
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  display: block;
+`;
+const BannerOverlay = styled.div`
+  position: absolute;
+  left: 1.6rem;
+  bottom: 2.1rem;
+  z-index: 2;
+  color: #fff;
+  background: rgba(30, 36, 51, 0.22);
+  border-radius: ${({ theme }) => theme.radius.card};
+  padding: 1.1rem 1.6rem 1.3rem 1.6rem;
+  box-shadow: ${({ theme }) => theme.shadow};
+  @media (max-width: 600px) {
+    left: 0.7rem;
+    right: 0.7rem;
+    padding: 0.7rem 1rem;
+  }
+`;
+const BannerTitle = styled.div`
+  font-size: 1.38rem;
+  font-weight: 700;
+  margin-bottom: 0.44rem;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.19);
+`;
+const BannerDesc = styled.div`
+  font-size: 1rem;
+  font-weight: 400;
+  opacity: 0.96;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.16);
+`;
+
+/* 본문 컨테이너 */
 const Main = styled.main`
   width: 100%;
   max-width: ${({ theme }) => theme.size.max};
-  min-width: ${({ theme }) => theme.size.min};
+  min-width: ${({ theme }) => theme.size.min}; /* ✅ 최소 폭 */
   margin: 0 auto;
-  padding: 0 ${({ theme }) => theme.size.gutterMobile} 4.2rem;
+  padding-left: ${({ theme }) => theme.size.gutterMobile};
+  padding-right: ${({ theme }) => theme.size.gutterMobile};
+  padding-bottom: 4.2rem;
+
   @media (min-width: 768px) {
     padding-left: ${({ theme }) => theme.size.gutterDesktop};
     padding-right: ${({ theme }) => theme.size.gutterDesktop};
   }
 `;
+
 const EventQuick = styled.div`
   display: flex;
   justify-content: flex-end;
@@ -133,8 +219,9 @@ const EventLink = styled(Link)`
     background: ${({ theme }) => theme.colors.gray200};
   }
 `;
+
 const MainSection = styled.section`
-  margin: 2.4rem 0 2.6rem;
+  margin: 2.4rem 0 2.6rem 0;
 `;
 const SectionTitle = styled.h2`
   font-size: 1.23rem;
@@ -143,6 +230,7 @@ const SectionTitle = styled.h2`
   letter-spacing: -0.01em;
   color: ${({ theme }) => theme.colors.text};
 `;
+
 const CategoryGrid = styled.div`
   display: flex;
   gap: 1.6rem;
@@ -165,6 +253,8 @@ const CatCard = styled(Link)`
     background: ${({ theme }) => theme.colors.gray200};
   }
 `;
+
+/* 오늘의 추천: 모바일 2열 + 카드 최소 폭 토큰 사용 */
 const CardsGrid = styled.div`
   display: grid;
   gap: 1.7rem;
@@ -198,6 +288,7 @@ const CardImg = styled(Image)`
   border-radius: ${({ theme }) => theme.radius.md};
   margin-bottom: 1.1rem;
 `;
+
 const QuickNav = styled.div`
   display: flex;
   gap: 1.3rem;

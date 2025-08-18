@@ -45,8 +45,6 @@ export default function ProductCard({ product }: Props) {
             alt={product.title}
             width={200}
             height={200}
-            sizes="200px"
-            decoding="async"
           />
           <WishlistButton
             onClick={handleWishlistClick}
