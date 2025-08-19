@@ -6,6 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay } from "swiper/modules";
+
+// 지웠던 스와이퍼 업데이트
 import "swiper/css";
 import "swiper/css/pagination";
 
