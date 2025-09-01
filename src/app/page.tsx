@@ -31,6 +31,7 @@ export default function HomePage() {
   return (
     <>
       {/* 배너: 화면 가득 + 중앙 정렬, 최대 1920px */}
+      <SkipLink></SkipLink>
       <BannerSection>
         <BannerInner>
           <Swiper
@@ -307,5 +308,15 @@ const QuickLink = styled(Link)`
   transition: background 0.14s;
   &:hover {
     background: ${({ theme }) => theme.colors.gray200};
+  }
+`;
+
+const SkipLink = styled.a`
+  position: absolute;
+  z-index: -9999;
+  top: auto;
+
+  :focus {
+    border: 2px slid #000;
   }
 `;
