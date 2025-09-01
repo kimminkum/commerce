@@ -31,7 +31,6 @@ export default function HomePage() {
   return (
     <>
       {/* 배너: 화면 가득 + 중앙 정렬, 최대 1920px */}
-      <SkipLink></SkipLink>
       <BannerSection>
         <BannerInner>
           <Swiper
@@ -41,6 +40,9 @@ export default function HomePage() {
             autoplay={{ delay: 2500, disableOnInteraction: false }}
             pagination={{ type: "fraction", clickable: true }}
             style={{ position: "relative" }}
+            a11y={{ enabled: true }}
+            aria-roledescription="carousel"
+            aria-label="프로모션 배너"
           >
             {bannerData.map((bn, idx) => (
               <SwiperSlide key={idx}>
@@ -58,7 +60,7 @@ export default function HomePage() {
       </BannerSection>
 
       {/* 본문: 1200px 컨테이너 + 좌우 16/20px + min-width */}
-      <Main>
+      <Main id="maincontent" tabIndex={-1}>
         <EventQuick>
           <EventLink href="/events/1">신상품 프로모션</EventLink>
           <EventLink href="/events/2">오늘의 특가 이벤트</EventLink>
@@ -308,15 +310,5 @@ const QuickLink = styled(Link)`
   transition: background 0.14s;
   &:hover {
     background: ${({ theme }) => theme.colors.gray200};
-  }
-`;
-
-const SkipLink = styled.a`
-  position: absolute;
-  z-index: -9999;
-  top: auto;
-
-  :focus {
-    border: 2px slid #000;
   }
 `;
