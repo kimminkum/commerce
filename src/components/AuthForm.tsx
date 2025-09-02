@@ -35,6 +35,7 @@ export default function AuthForm({ onSubmit, type }: AuthFormProps) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="이메일을 입력하세요"
+          required
         />
         <Label htmlFor="password">비밀번호</Label>
         <Input
@@ -44,6 +45,8 @@ export default function AuthForm({ onSubmit, type }: AuthFormProps) {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="비밀번호를 입력하세요"
+          required
+          minLength={8}
         />
         {error && <ErrorMsg>{error}</ErrorMsg>}
         <SubmitBtn type="submit" disabled={!email || !password}>
