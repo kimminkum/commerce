@@ -4,7 +4,7 @@ import styled from "styled-components";
 import Link from "next/link";
 
 interface AuthFormProps {
-  onSubmit: (email: string, password: string) => void;
+  onSubmit: (email: string, password: string) => void | Promise<void>;
   type: "login" | "signup";
 }
 
@@ -13,42 +13,77 @@ export default function AuthForm({ onSubmit, type }: AuthFormProps) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError("이메일과 비밀번호를 입력하세요.");
+
+    const form = e.currentTarget;
+    if (!form.checkValidity()) {
+      form.reportValidity(); // 네이티브 검증 UI
       return;
     }
-    setError("");
-    onSubmit(email, password);
+
+    try {
+      setError("");
+      await onSubmit(email.trim(), password); // 공백 제거 중요!
+    } catch (err) {
+      const code = (err as { code?: string })?.code ?? "";
+      if (code === "auth/invalid-email") {
+        setError("이메일 형식이 올바르지 않습니다.");
+      } else if (code === "auth/too-many-requests") {
+        setError("요청이 많습니다. 잠시 후 다시 시도해 주세요.");
+      } else if (code === "auth/network-request-failed") {
+        setError("네트워크 오류입니다. 연결을 확인해 주세요.");
+      } else {
+        // 계정 열거 방지: 일반 실패 문구
+        setError("이메일 또는 비밀번호가 올바르지 않습니다.");
+      }
+      requestAnimationFrame(() =>
+        document.getElementById("form-error")?.focus()
+      );
+    }
   };
 
   return (
     <FormWrapper>
       <FormTitle>{type === "login" ? "로그인" : "회원가입"}</FormTitle>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} noValidate>
+        {error && (
+          <ErrorMsg
+            id="form-error"
+            role="alert"
+            aria-live="assertive"
+            tabIndex={-1}
+          >
+            {error}
+          </ErrorMsg>
+        )}
+
         <Label htmlFor="email">이메일</Label>
         <Input
           id="email"
           type="email"
+          name="email"
           autoComplete="username"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="이메일을 입력하세요"
           required
+          aria-describedby={error ? "form-error" : undefined}
         />
         <Label htmlFor="password">비밀번호</Label>
         <Input
           id="password"
           type="password"
+          name="password"
           autoComplete={type === "login" ? "current-password" : "new-password"}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="비밀번호를 입력하세요"
           required
           minLength={8}
+          aria-describedby={error ? "form-error" : undefined}
         />
-        {error && <ErrorMsg>{error}</ErrorMsg>}
+
         <SubmitBtn type="submit" disabled={!email || !password}>
           {type === "login" ? "로그인" : "회원가입"}
         </SubmitBtn>

@@ -11,18 +11,11 @@ export default function LoginPage() {
   const setUser = useAuthStore((state) => state.setUser);
 
   const handleLogin = async (email: string, password: string) => {
-    try {
-      const user = await signIn(email, password);
-      if (!user.uid || !user.email)
-        throw new Error("잘못된 사용자 정보입니다.");
-
-      const expiresAt = Date.now() + 60 * 60 * 1000;
-      setUser({ uid: user.uid, email: user.email }, expiresAt);
-      router.push("/");
-    } catch (err) {
-      alert("로그인 실패");
-      console.error(err);
-    }
+    const user = await signIn(email, password); // 실패 시 FirebaseError throw
+    if (!user.uid || !user.email) throw new Error("잘못된 사용자 정보입니다.");
+    const expiresAt = Date.now() + 60 * 60 * 1000;
+    setUser({ uid: user.uid, email: user.email }, expiresAt);
+    router.push("/");
   };
 
   return <AuthForm onSubmit={handleLogin} type="login" />;
