@@ -21,6 +21,11 @@ export default function CartPage() {
   const addOrder = useOrderStore((s) => s.addOrder);
   const router = useRouter();
 
+  // ✅ 수량 변화만 감지하는 '서명' 문자열(새 객체 반환 X → 무한루프 방지)
+  const qtySignature = useCartStore((s) =>
+    s.cart.map((p) => `${p.id}:${s.getQty(p.id) ?? 1}`).join("|")
+  );
+
   const [checkedIds, setCheckedIds] = useState<number[]>([]);
 
   // 카트 변경 시, 존재하지 않는 id는 선택 해제
@@ -66,17 +71,22 @@ export default function CartPage() {
     router.replace("/order/complete");
   };
 
-  // 합계 계산 (수량은 store의 getQty(id) 사용)
+  // ✅ 합계 계산: 수량 변경 시 qtySignature 덕분에 재계산됨
   const { subtotal, shipping, total } = useMemo(() => {
-    const selected = cart.filter((p) => checkedIds.includes(p.id));
-    const sum = selected.reduce(
-      (acc, p) => acc + p.price * (getQty(p.id) ?? 1),
-      0
-    );
+    const checked = new Set(checkedIds);
+    let sum = 0;
+
+    for (const p of cart) {
+      if (!checked.has(p.id)) continue;
+      sum += p.price * (getQty(p.id) ?? 1);
+    }
+
     const ship =
       sum === 0 ? 0 : sum >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
     return { subtotal: sum, shipping: ship, total: sum + ship };
-  }, [cart, checkedIds, getQty]);
+    // 의도적으로 qtySignature를 deps에 포함 (수량 변화 트리거)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cart, checkedIds, getQty, qtySignature]);
 
   if (cart.length === 0) return <Empty>장바구니가 비었습니다.</Empty>;
 
